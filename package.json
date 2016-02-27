@@ -4,7 +4,8 @@
   "description": "Process spawning APIs beautified",
   "main": "lib/index.js",
   "scripts": {
-    "test": "apm test"
+    "test": "apm test",
+    "compile": "ucompiler go"
   },
   "repository": {
     "type": "git",
