@@ -5,6 +5,15 @@
 import invariant from 'assert'
 import type {Exec$Options} from './types'
 
+export const assign = Object.assign || function (target, source) {
+  for (const key in source) {
+    if (source.hasOwnProperty(key)) {
+      target[key] = source[key]
+    }
+  }
+  return target
+}
+
 export function validate(filePath: string, parameters: Array<string>, options: Exec$Options) {
   invariant(typeof filePath === 'string' && filePath, 'filePath must be a string')
   invariant(Array.isArray(parameters), 'parameters must be an array')
@@ -19,4 +28,7 @@ export function validate(filePath: string, parameters: Array<string>, options: E
   if (options.env) {
     invariant(typeof options.env === 'object', 'options.env must be an object')
   } else options.env = {}
+  if (options.stdin) {
+    invariant(typeof options.stdin === 'string', 'options.stdin must be an object')
+  } else options.stdin = null
 }
