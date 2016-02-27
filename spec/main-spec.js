@@ -6,6 +6,7 @@ import {it} from './helpers'
 
 const PATH_NODE = Path.join(__dirname, 'fixtures', 'node.js')
 const PATH_WAIT = Path.join(__dirname, 'fixtures', 'wait.js')
+const PATH_ENV = Path.join(__dirname, 'fixtures', 'env.js')
 
 describe('exec', function() {
   it('works with stdout', async function() {
@@ -60,5 +61,13 @@ describe('exec', function() {
   it('ignores timeouts completely if no timeout is specified', async function() {
     const result = await exec(process.execPath, [PATH_WAIT, '7000'])
     expect(result).toBe('PASSED')
+  })
+
+  it('passes env properly', async function() {
+    const result = await exec(process.execPath, [PATH_ENV], {env: {
+      SOMETHING: 'Hello',
+      SOMETHING_ELSE: 'Dolly'
+    }})
+    expect(result).toBe('Hello\nDolly')
   })
 })
