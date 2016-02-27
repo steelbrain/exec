@@ -4,5 +4,6 @@
 
 export type Exec$Options = {
   stream?: 'stdout' | 'stderr' | 'both',
-  timeout?: number
+  timeout?: number,
+  env?: Object
 }

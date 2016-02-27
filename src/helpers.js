@@ -6,7 +6,7 @@ import invariant from 'assert'
 import type {Exec$Options} from './types'
 
 export function validate(filePath: string, parameters: Array<string>, options: Exec$Options) {
-  invariant(typeof filePath === 'string', 'filePath must be a string')
+  invariant(typeof filePath === 'string' && filePath, 'filePath must be a string')
   invariant(Array.isArray(parameters), 'parameters must be an array')
   invariant(typeof options === 'object' && options, 'options must be an object')
   if (options.stream) {
@@ -16,4 +16,7 @@ export function validate(filePath: string, parameters: Array<string>, options: E
   if (options.timeout) {
     invariant(typeof options.timeout === 'number', 'options.timeout must be a number')
   } else options.timeout = Infinity
+  if (options.env) {
+    invariant(typeof options.env === 'object', 'options.env must be an object')
+  } else options.env = {}
 }
