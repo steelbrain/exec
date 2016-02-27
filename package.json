@@ -1,0 +1,24 @@
+{
+  "name": "sb-exec",
+  "version": "1.0.0",
+  "description": "Process spawning APIs beautified",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "apm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/steelbrain/exec.git"
+  },
+  "keywords": [
+    "child_process",
+    "process",
+    "exec"
+  ],
+  "author": "steelbrain",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/steelbrain/exec/issues"
+  },
+  "homepage": "https://github.com/steelbrain/exec#readme"
+}
