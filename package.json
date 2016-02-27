@@ -4,7 +4,15 @@
   "description": "Process spawning APIs beautified",
   "main": "lib/index.js",
   "scripts": {
-    "test": "apm test"
+    "test": "apm test",
+    "compile": "ucompiler go"
+  },
+  "devDependencies": {
+    "ucompiler": "^3.1.7",
+    "ucompiler-plugin-babel": "^3.1.1",
+    "ucompiler-plugin-newline": "^3.0.0",
+    "babel-preset-steelbrain": "^1.0.1",
+    "babel-preset-steelbrain-flow": "^1.0.1"
   },
   "repository": {
     "type": "git",
@@ -20,5 +28,8 @@
   "bugs": {
     "url": "https://github.com/steelbrain/exec/issues"
   },
-  "homepage": "https://github.com/steelbrain/exec#readme"
+  "homepage": "https://github.com/steelbrain/exec#readme",
+  "dependencies": {
+    "consistent-env": "^1.0.1"
+  }
 }
