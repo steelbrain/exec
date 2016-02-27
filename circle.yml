@@ -5,6 +5,7 @@ dependencies:
     - sudo apt-get update
     - sudo apt-get -f install
     - apm install
+    - npm run compile
 test:
   override:
     - apm test
