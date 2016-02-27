@@ -16,8 +16,8 @@ function exec(filePath: string, parameters: Array<string> = [], options: Exec$Op
     })
     // Note: We want to reject with a nice promise ourselves instead of silently killing as node does
     spawnOptions.timeout = null
-    if (options.env.OS) {
-      options.env.OS = undefined
+    if (spawnOptions.env.OS) {
+      spawnOptions.env.OS = undefined
     }
 
     const spawnedProcess = spawn(filePath, parameters, spawnOptions)
