@@ -20,5 +20,8 @@
   "bugs": {
     "url": "https://github.com/steelbrain/exec/issues"
   },
-  "homepage": "https://github.com/steelbrain/exec#readme"
+  "homepage": "https://github.com/steelbrain/exec#readme",
+  "dependencies": {
+    "consistent-env": "^1.0.1"
+  }
 }
