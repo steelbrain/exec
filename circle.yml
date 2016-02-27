@@ -5,7 +5,13 @@ dependencies:
     - sudo apt-get update
     - sudo apt-get -f install
     - apm install
+    - nvm use 5.1.0
     - npm run compile
+
 test:
   override:
     - apm test
+
+machine:
+  node:
+    version: 5.1.0
