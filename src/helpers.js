@@ -31,4 +31,7 @@ export function validate(filePath: string, parameters: Array<string>, options: E
   if (options.stdin) {
     invariant(typeof options.stdin === 'string', 'options.stdin must be an object')
   } else options.stdin = null
+  if (typeof options.throwOnStdErr !== 'undefined') {
+    invariant(typeof options.throwOnStdErr === 'boolean', 'options.throwOnStdErr must be a boolean')
+  } else options.throwOnStdErr = true
 }
