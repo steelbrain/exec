@@ -19,6 +19,10 @@ function exec(filePath: string, parameters: Array<string> = [], options: Exec$Op
     if (spawnOptions.env.OS) {
       spawnOptions.env.OS = undefined
     }
+    if (process.versions.electron) {
+      spawnOptions.env.ELECTRON_INTERNAL_RUN_AS_NODE = '1'
+      spawnOptions.env.ATOM_SHELL_INTERNAL_RUN_AS_NODE = '1'
+    }
 
     const spawnedProcess = spawn(filePath, parameters, spawnOptions)
     const data = {stdout: [], stderr: []}
