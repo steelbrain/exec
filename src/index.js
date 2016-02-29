@@ -28,12 +28,16 @@ function exec(filePath: string, parameters: Array<string> = [], options: Exec$Op
     const data = {stdout: [], stderr: []}
     let timeout
 
-    spawnedProcess.stdout.on('data', function(chunk) {
-      data.stdout.push(chunk)
-    })
-    spawnedProcess.stderr.on('data', function(chunk) {
-      data.stderr.push(chunk)
-    })
+    if (spawnedProcess.stdout) {
+      spawnedProcess.stdout.on('data', function(chunk) {
+        data.stdout.push(chunk)
+      })
+    }
+    if (spawnedProcess.stderr) {
+      spawnedProcess.stderr.on('data', function(chunk) {
+        data.stderr.push(chunk)
+      })
+    }
     spawnedProcess.on('error', function(error) {
       reject(error)
     })
@@ -52,14 +56,16 @@ function exec(filePath: string, parameters: Array<string> = [], options: Exec$Op
       }
     })
 
-    if (options.stdin) {
+    if (spawnedProcess.stdin) {
+      if (options.stdin) {
+        try {
+          spawnedProcess.stdin.write(options.stdin)
+        } catch (_) { /* No Op */ }
+      }
       try {
-        spawnedProcess.stdin.write(options.stdin)
+        spawnedProcess.stdin.end()
       } catch (_) { /* No Op */ }
     }
-    try {
-      spawnedProcess.stdin.end()
-    } catch (_) { /* No Op */ }
 
     if (options.timeout !== Infinity) {
       timeout = setTimeout(function () {

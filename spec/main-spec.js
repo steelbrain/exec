@@ -70,4 +70,12 @@ describe('exec', function() {
     }})
     expect(result).toBe('Hello\nDolly')
   })
+
+  it('works well with stdio: inherit', async function() {
+    const result = await exec(process.execPath, [PATH_ENV], {env: {
+      SOMETHING: 'Hello',
+      SOMETHING_ELSE: 'Dolly'
+    }, stdio: 'inherit'})
+    expect(result).toBe('')
+  })
 })
