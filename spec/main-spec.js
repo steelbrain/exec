@@ -76,6 +76,6 @@ describe('exec', function() {
       SOMETHING: 'Hello',
       SOMETHING_ELSE: 'Dolly'
     }, stdio: 'inherit'})
-    expect(result).toBe('Hello\nDolly')
+    expect(result).toBe('')
   })
 })
