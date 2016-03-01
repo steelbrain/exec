@@ -79,3 +79,10 @@ describe('exec', function() {
     expect(result).toBe('')
   })
 })
+
+describe('execNode', function() {
+  it('is a sugar method that uses exec', async function() {
+    const result = await execNode(PATH_NODE)
+    expect(result).toBe('STDOUT')
+  })
+})
