@@ -7,7 +7,7 @@ import { async as getEnv } from 'consistent-env'
 import getNpmPath from 'sb-npm-path'
 import type { Exec$Options } from './types'
 
-const PATH_REGEX = /PATH/i
+const PATH_REGEX = /^PATH$/i
 const PATH_SEPARATOR = process.platform === 'win32' ? ';' : ':'
 export const assign = Object.assign || function(target, source) {
   for (const key in source) {
