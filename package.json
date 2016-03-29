@@ -29,6 +29,7 @@
   },
   "homepage": "https://github.com/steelbrain/exec#readme",
   "dependencies": {
-    "consistent-env": "^1.0.1"
+    "consistent-env": "^1.0.1",
+    "sb-npm-path": "^1.0.0"
   }
 }
