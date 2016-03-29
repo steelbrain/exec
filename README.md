@@ -21,7 +21,7 @@ type $Options = {
     directory: string,
     prepend?: boolean
   },
-  throwOnStderr: boolean
+  throwOnStdErr?: boolean
 } // Also supports all options of child_process::spawn
 export function exec(filePath: string, parameters: array, options: $Options)
 export function execNode(filePath: string, parameters: array, options: $Options)
