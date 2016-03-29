@@ -49,8 +49,6 @@ If the control of your program is in `node_modules/flow/index.js` and you pass t
     │   └── flow
     └── flow
         └── index.js
-
-4 directories, 3 files
 ```
 ```
 .
@@ -66,8 +64,6 @@ If the control of your program is in `node_modules/flow/index.js` and you pass t
             │   └── freedom
             └── freedom
                 └── index.js
-
-7 directories, 5 files
 ```
 
 ## License
