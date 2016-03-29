@@ -7,7 +7,11 @@ export type Exec$Options = {
   timeout?: number,
   env?: Object,
   stdin?: ?string,
-  throwOnStdErr?: boolean
+  local?: {
+    directory: string,
+    prepend?: boolean
+  },
+  throwOnStderr: boolean
 }
 
 export type Exec$Result = string | {stdout: string, stderr: string}
