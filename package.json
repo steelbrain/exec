@@ -5,13 +5,17 @@
   "main": "lib/index.js",
   "scripts": {
     "test": "apm test",
-    "compile": "ucompiler go"
+    "compile": "ucompiler go",
+    "lint": "eslint ."
   },
   "devDependencies": {
-    "ucompiler": "^3.1.7",
-    "ucompiler-plugin-babel": "^3.1.1",
-    "ucompiler-plugin-newline": "^3.0.0",
-    "babel-preset-steelbrain": "^2.0.0"
+    "eslint": "^2.4.0",
+    "babel-eslint": "^6.0.0",
+    "babel-preset-steelbrain": "^2.0.1",
+    "eslint-config-airbnb": "^6.0.2",
+    "eslint-plugin-react": "^4.2.1",
+    "ucompiler": "^3.1.8",
+    "ucompiler-plugin-babel": "^3.1.1"
   },
   "repository": {
     "type": "git",
@@ -29,6 +33,7 @@
   },
   "homepage": "https://github.com/steelbrain/exec#readme",
   "dependencies": {
-    "consistent-env": "^1.0.1"
+    "consistent-env": "^1.0.1",
+    "sb-npm-path": "^1.0.0"
   }
 }

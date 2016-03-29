@@ -2,30 +2,21 @@
 
 /* @flow */
 
-import {spawn} from 'child_process'
-import getEnvironment from 'consistent-env'
-import {assign, validate} from './helpers'
-import type {Exec$Options, Exec$Result} from './types'
+import { spawn } from 'child_process'
+import { getSpawnOptions, validate } from './helpers'
+import type { Exec$Options, Exec$Result } from './types'
 
-function exec(filePath: string, parameters: Array<string> = [], options: Exec$Options = {}): Promise<Exec$Result> {
+async function exec(
+  filePath: string,
+  parameters: Array<string> = [],
+  options: Exec$Options = {}
+): Promise<Exec$Result> {
   validate(filePath, parameters, options)
+  const spawnOptions = await getSpawnOptions(options)
 
-  return new Promise(function(resolve, reject) {
-    const spawnOptions = assign({}, options, {
-      env: assign(getEnvironment(), options.env)
-    })
-    // Note: We want to reject with a nice promise ourselves instead of silently killing as node does
-    spawnOptions.timeout = null
-    if (spawnOptions.env.OS) {
-      spawnOptions.env.OS = undefined
-    }
-    if (process.versions.electron) {
-      spawnOptions.env.ELECTRON_INTERNAL_RUN_AS_NODE = '1'
-      spawnOptions.env.ATOM_SHELL_INTERNAL_RUN_AS_NODE = '1'
-    }
-
+  return await new Promise(function(resolve, reject) {
     const spawnedProcess = spawn(filePath, parameters, spawnOptions)
-    const data = {stdout: [], stderr: []}
+    const data = { stdout: [], stderr: [] }
     let timeout
 
     if (spawnedProcess.stdout) {
@@ -52,7 +43,7 @@ function exec(filePath: string, parameters: Array<string> = [], options: Exec$Op
       } else if (options.stream === 'stderr') {
         resolve(data.stderr.join('').trim())
       } else {
-        resolve({stdout: data.stdout.join('').trim(), stderr: data.stderr.join('').trim()})
+        resolve({ stdout: data.stdout.join('').trim(), stderr: data.stderr.join('').trim() })
       }
     })
 
@@ -68,7 +59,7 @@ function exec(filePath: string, parameters: Array<string> = [], options: Exec$Op
     }
 
     if (options.timeout !== Infinity) {
-      timeout = setTimeout(function () {
+      timeout = setTimeout(function() {
         try {
           spawnedProcess.kill()
         } catch (_) { /* No Op */ }
