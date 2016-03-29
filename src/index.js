@@ -2,10 +2,10 @@
 
 /* @flow */
 
-import {spawn} from 'child_process'
+import { spawn } from 'child_process'
 import getEnvironment from 'consistent-env'
-import {assign, validate} from './helpers'
-import type {Exec$Options, Exec$Result} from './types'
+import { assign, validate } from './helpers'
+import type { Exec$Options, Exec$Result } from './types'
 
 function exec(filePath: string, parameters: Array<string> = [], options: Exec$Options = {}): Promise<Exec$Result> {
   validate(filePath, parameters, options)
@@ -25,7 +25,7 @@ function exec(filePath: string, parameters: Array<string> = [], options: Exec$Op
     }
 
     const spawnedProcess = spawn(filePath, parameters, spawnOptions)
-    const data = {stdout: [], stderr: []}
+    const data = { stdout: [], stderr: [] }
     let timeout
 
     if (spawnedProcess.stdout) {
@@ -52,7 +52,7 @@ function exec(filePath: string, parameters: Array<string> = [], options: Exec$Op
       } else if (options.stream === 'stderr') {
         resolve(data.stderr.join('').trim())
       } else {
-        resolve({stdout: data.stdout.join('').trim(), stderr: data.stderr.join('').trim()})
+        resolve({ stdout: data.stdout.join('').trim(), stderr: data.stderr.join('').trim() })
       }
     })
 
@@ -68,7 +68,7 @@ function exec(filePath: string, parameters: Array<string> = [], options: Exec$Op
     }
 
     if (options.timeout !== Infinity) {
-      timeout = setTimeout(function () {
+      timeout = setTimeout(function() {
         try {
           spawnedProcess.kill()
         } catch (_) { /* No Op */ }

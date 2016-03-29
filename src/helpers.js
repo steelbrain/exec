@@ -3,9 +3,9 @@
 /* @flow */
 
 import invariant from 'assert'
-import type {Exec$Options} from './types'
+import type { Exec$Options } from './types'
 
-export const assign = Object.assign || function (target, source) {
+export const assign = Object.assign || function(target, source) {
   for (const key in source) {
     if (source.hasOwnProperty(key)) {
       target[key] = source[key]
@@ -20,7 +20,8 @@ export function validate(filePath: string, parameters: Array<string>, options: E
   invariant(typeof options === 'object' && options, 'options must be an object')
   if (options.stream) {
     const stream = options.stream
-    invariant(stream === 'both' || stream === 'stdout' || stream === 'stderr', 'options.stream should be stdout|stderr|both')
+    invariant(stream === 'both' || stream === 'stdout' || stream === 'stderr',
+      'options.stream should be stdout|stderr|both')
   } else options.stream = 'stdout'
   if (options.timeout) {
     invariant(typeof options.timeout === 'number', 'options.timeout must be a number')
