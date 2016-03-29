@@ -78,6 +78,28 @@ describe('exec', function() {
     }, stdio: 'inherit' })
     expect(result).toBe('')
   })
+
+  it('supports executing modules from local paths', async function() {
+    const result = await exec('sb-exec-test', [], { local: {
+      directory: Path.join(__dirname, 'fixtures', 'path')
+    } })
+    expect(result).toBe('HEY')
+  })
+  it('supports prepend', async function() {
+    const PATH = Path.join(__dirname, 'fixtures', 'path', 'node_modules', '.bin')
+    const result = await exec('sb-exec-test', [], { local: {
+      directory: Path.join(__dirname, 'fixtures', 'deep'),
+      prepend: true
+    }, env: { PATH } })
+    expect(result).toBe('HEY2')
+  })
+  it('supports append', async function() {
+    const PATH = Path.join(__dirname, 'fixtures', 'path', 'node_modules', '.bin')
+    const result = await exec('sb-exec-test', [], { local: {
+      directory: Path.join(__dirname, 'fixtures', 'deep')
+    }, env: { PATH } })
+    expect(result).toBe('HEY')
+  })
 })
 
 describe('execNode', function() {
