@@ -1,3 +1,7 @@
+## 1.0.3
+
+- Fix a typo in Electron run as node var
+
 ## 1.0.2
 
 - Add `local` option
