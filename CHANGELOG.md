@@ -1,3 +1,7 @@
+## 1.0.4
+
+- Fix for Atom 1.7.0+ by setting env vars properly
+
 ## 1.0.3
 
 - Fix a typo in Electron run as node var

@@ -67,6 +67,7 @@ export async function getSpawnOptions(options: Exec$Options): Promise {
   if (process.versions.electron) {
     spawnOptions.env.ELECTRON_RUN_AS_NODE = '1'
     spawnOptions.env.ATOM_SHELL_INTERNAL_RUN_AS_NODE = '1'
+    spawnOptions.env.ELECTRON_NO_ATTACH_CONSOLE = '1'
   }
   return spawnOptions
 }
