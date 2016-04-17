@@ -7,7 +7,6 @@ import { async as getEnv } from 'consistent-env'
 import getNpmPath from 'sb-npm-path'
 import type { Exec$Options } from './types'
 
-const PATH_REGEX = /^PATH$/i
 const PATH_SEPARATOR = process.platform === 'win32' ? ';' : ':'
 export const assign = Object.assign || function(target, source) {
   for (const key in source) {
@@ -53,7 +52,7 @@ export async function getSpawnOptions(options: Exec$Options): Promise {
   if (local) {
     const npmPath = await getNpmPath.async(local.directory)
     for (const key in spawnOptions.env) {
-      if (spawnOptions.env.hasOwnProperty(key) && PATH_REGEX.test(key)) {
+      if (spawnOptions.env.hasOwnProperty(key) && key.toUpperCase() === 'PATH') {
         const value = spawnOptions.env[key]
         spawnOptions.env[key] = local.prepend ? npmPath + PATH_SEPARATOR + value : value + PATH_SEPARATOR + npmPath
         break
@@ -70,4 +69,24 @@ export async function getSpawnOptions(options: Exec$Options): Promise {
     spawnOptions.env.ELECTRON_NO_ATTACH_CONSOLE = '1'
   }
   return spawnOptions
+}
+
+export function mergeAllPaths(env: Object): string {
+  let allOfIt = ''
+  for (const key in env) {
+    if (env.hasOwnProperty(key) && key.toUpperCase() === 'PATH') {
+      allOfIt += ';' + env[key]
+    }
+  }
+  return allOfIt
+}
+
+export function mergeAllPathExts(env: Object): string {
+  let allOfIt = ''
+  for (const key in env) {
+    if (env.hasOwnProperty(key) && key.toUpperCase() === 'EXTPATH') {
+      allOfIt += ';' + env[key]
+    }
+  }
+  return allOfIt
 }
