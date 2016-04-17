@@ -1,6 +1,6 @@
 ## 1.0.5
 
-- Add fix for PATHEXT on windows
+- Add fix for EXTPATH on windows
 
 ## 1.0.4
 
