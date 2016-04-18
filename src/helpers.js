@@ -72,21 +72,21 @@ export async function getSpawnOptions(options: Exec$Options): Promise {
 }
 
 export function mergeAllPaths(env: Object): string {
-  let allOfIt = ''
+  const toReturn = []
   for (const key in env) {
     if (env.hasOwnProperty(key) && key.toUpperCase() === 'PATH') {
-      allOfIt += ';' + env[key]
+      toReturn.push(env[key])
     }
   }
-  return allOfIt
+  return toReturn.join(';')
 }
 
-export function mergeAllPathExts(env: Object): string {
-  let allOfIt = ''
+export function mergeAllExtPaths(env: Object): string {
+  const toReturn = []
   for (const key in env) {
     if (env.hasOwnProperty(key) && key.toUpperCase() === 'EXTPATH') {
-      allOfIt += ';' + env[key]
+      toReturn.push(env[key])
     }
   }
-  return allOfIt
+  return toReturn.join(';')
 }
