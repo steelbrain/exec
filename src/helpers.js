@@ -81,7 +81,7 @@ export function mergeAllPaths(env: Object): string {
   return toReturn.join(';')
 }
 
-export function mergeAllExtPaths(env: Object): string {
+export function mergeAllPathExts(env: Object): string {
   const toReturn = []
   for (const key in env) {
     if (env.hasOwnProperty(key) && key.toUpperCase() === 'PATHEXT') {

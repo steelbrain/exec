@@ -4,7 +4,7 @@
 
 import { spawn } from 'child_process'
 import extify from 'extify'
-import { mergeAllPaths, mergeAllExtPaths, getSpawnOptions, validate } from './helpers'
+import { mergeAllPaths, mergeAllPathExts, getSpawnOptions, validate } from './helpers'
 import type { Exec$Options, Exec$Result } from './types'
 
 async function exec(
@@ -15,7 +15,7 @@ async function exec(
   validate(filePath, parameters, options)
   const spawnOptions = await getSpawnOptions(options)
   if (process.platform === 'win32') {
-    filePath = await extify(filePath, mergeAllPaths(spawnOptions.env), mergeAllExtPaths(spawnOptions.env))
+    filePath = await extify(filePath, mergeAllPaths(spawnOptions.env), mergeAllPathExts(spawnOptions.env))
   }
 
   return await new Promise(function(resolve, reject) {
