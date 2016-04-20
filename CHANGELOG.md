@@ -1,3 +1,7 @@
+## 1.0.5
+
+- Add fix for EXTPATH on windows
+
 ## 1.0.4
 
 - Fix for Atom 1.7.0+ by setting env vars properly
