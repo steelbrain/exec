@@ -84,7 +84,7 @@ export function mergeAllPaths(env: Object): string {
 export function mergeAllExtPaths(env: Object): string {
   const toReturn = []
   for (const key in env) {
-    if (env.hasOwnProperty(key) && key.toUpperCase() === 'EXTPATH') {
+    if (env.hasOwnProperty(key) && key.toUpperCase() === 'PATHEXT') {
       toReturn.push(env[key])
     }
   }
