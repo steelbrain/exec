@@ -42,9 +42,9 @@ export function validate(filePath: string, parameters: Array<string>, options: E
     invariant(typeof options.local === 'object', 'options.local must be an object')
     invariant(typeof options.local.directory === 'string', 'options.local.directory must be a string')
   }
-  if (typeof options.throwWhenEmptyStderr !== 'undefined') {
-    invariant(typeof options.throwWhenEmptyStderr === 'boolean', 'options.throwWhenEmptyStderr must be a boolean')
-  } else options.throwWhenEmptyStderr = true
+  if (typeof options.allowEmptyStderr !== 'undefined') {
+    invariant(typeof options.allowEmptyStderr === 'boolean', 'options.throwWhenEmptyStderr must be a boolean')
+  } else options.allowEmptyStderr = false
 }
 
 export async function getSpawnOptions(options: Exec$Options): Promise {

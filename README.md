@@ -21,7 +21,7 @@ type $Options = {
     prepend?: boolean
   },
   throwOnStdErr?: boolean = true,
-  throwWhenEmptyStderr?: boolean = true
+  allowEmptyStderr?: boolean = false
 } // Also supports all options of child_process::spawn
 export function exec(filePath: string, parameters: array, options: $Options)
 export function execNode(filePath: string, parameters: array, options: $Options)

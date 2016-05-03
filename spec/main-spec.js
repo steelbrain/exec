@@ -124,9 +124,9 @@ describe('exec', function() {
       expect(_.message).toContain('without proper output')
     }
   })
-  it('does not throw on `stderr` if the output is empty and throwWhenEmptyStderr is set to false', async function() {
+  it('does not throw on `stderr` if the output is empty and allowEmptyStderr is set to false', async function() {
     const path = Path.join(__dirname, 'fixtures', 'non-zero.js')
-    const output = await execNode(path, [], { stream: 'stderr', throwWhenEmptyStderr: false })
+    const output = await execNode(path, [], { stream: 'stderr', allowEmptyStderr: true })
     expect(output).toBe('')
   })
 })

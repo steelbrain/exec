@@ -12,7 +12,7 @@ export type Exec$Options = {
     prepend?: boolean
   },
   throwOnStdErr?: boolean,
-  throwWhenEmptyStderr?: boolean
+  allowEmptyStderr?: boolean
 }
 
 export type Exec$Result = string | {stdout: string, stderr: string}
