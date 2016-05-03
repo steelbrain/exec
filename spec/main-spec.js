@@ -121,7 +121,7 @@ describe('exec', function() {
       expect(false).toBe(true)
     } catch (_) {
       expect(_.message).toContain('code: 2')
-      expect(_.message).toContain('without proper output')
+      expect(_.message).toContain('with no output')
     }
   })
   it('does not throw on `stderr` if the output is empty and allowEmptyStderr is set to false', async function() {
