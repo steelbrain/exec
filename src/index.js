@@ -43,7 +43,7 @@ async function exec(
           reject(new Error(data.stderr.join('').trim()))
         } else {
           const stdout = data.stdout.join('').trim()
-          if (exitCode !== 0 && stdout.length === 0) {
+          if (exitCode !== 0) {
             reject(new Error(`Process exited with non-zero code: ${exitCode}`))
           } else {
             resolve(stdout)
