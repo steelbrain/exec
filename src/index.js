@@ -51,7 +51,7 @@ async function exec(
         }
       } else if (options.stream === 'stderr') {
         const stderr = data.stderr.join('').trim()
-        if (stderr.length === 0) {
+        if (stderr.length === 0 && options.throwWhenEmptyStderr) {
           reject(new Error(`Process exited without proper output, code: ${exitCode}`))
         } else {
           resolve(stderr)
