@@ -36,18 +36,28 @@ async function exec(
     spawnedProcess.on('error', function(error) {
       reject(error)
     })
-    spawnedProcess.on('close', function() {
+    spawnedProcess.on('close', function(exitCode) {
       clearTimeout(timeout)
       if (options.stream === 'stdout') {
         if (data.stderr.length && options.throwOnStdErr) {
           reject(new Error(data.stderr.join('').trim()))
         } else {
-          resolve(data.stdout.join('').trim())
+          const stdout = data.stdout.join('').trim()
+          if (exitCode !== 0 && stdout.length === 0) {
+            reject(new Error(`Process exited with non-zero code: ${exitCode}`))
+          } else {
+            resolve(stdout)
+          }
         }
       } else if (options.stream === 'stderr') {
-        resolve(data.stderr.join('').trim())
+        const stderr = data.stderr.join('').trim()
+        if (stderr.length === 0) {
+          reject(new Error(`Process exited without proper output, code: ${exitCode}`))
+        } else {
+          resolve(stderr)
+        }
       } else {
-        resolve({ stdout: data.stdout.join('').trim(), stderr: data.stderr.join('').trim() })
+        resolve({ stdout: data.stdout.join('').trim(), stderr: data.stderr.join('').trim(), exitCode })
       }
     })
 
