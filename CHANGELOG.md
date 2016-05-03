@@ -1,3 +1,9 @@
+## 2.0.0
+
+- Add `exitCode` to return output when stream is `both`
+- Throw if `stream` is `stderr` and there is no output, you can disable this by setting `allowEmptyStderr` option
+- Throw if `stream` is `stdout` and exit code is non-zero
+
 ## 1.0.5
 
 - Add fix for EXTPATH on windows

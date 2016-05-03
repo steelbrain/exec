@@ -11,7 +11,8 @@ export type Exec$Options = {
     directory: string,
     prepend?: boolean
   },
-  throwOnStdErr?: boolean
+  throwOnStdErr?: boolean,
+  allowEmptyStderr?: boolean
 }
 
 export type Exec$Result = string | {stdout: string, stderr: string}

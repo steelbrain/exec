@@ -100,6 +100,35 @@ describe('exec', function() {
     }, env: { PATH } })
     expect(result).toBe('HEY')
   })
+  it('cries if stream is stdout and exit code is non-zero', async function() {
+    const path = Path.join(__dirname, 'fixtures', 'non-zero.js')
+    try {
+      await execNode(path)
+      expect(false).toBe(true)
+    } catch (_) {
+      expect(_.message).toContain('code: 2')
+    }
+  })
+  it('returns exitCode for `both` streams', async function() {
+    const path = Path.join(__dirname, 'fixtures', 'non-zero.js')
+    const output = await execNode(path, [], { stream: 'both' })
+    expect(output.exitCode).toBe(2)
+  })
+  it('throws if stream is `stderr` and the output is empty', async function() {
+    const path = Path.join(__dirname, 'fixtures', 'non-zero.js')
+    try {
+      await execNode(path, [], { stream: 'stderr' })
+      expect(false).toBe(true)
+    } catch (_) {
+      expect(_.message).toContain('code: 2')
+      expect(_.message).toContain('with no output')
+    }
+  })
+  it('does not throw on `stderr` if the output is empty and allowEmptyStderr is set to false', async function() {
+    const path = Path.join(__dirname, 'fixtures', 'non-zero.js')
+    const output = await execNode(path, [], { stream: 'stderr', allowEmptyStderr: true })
+    expect(output).toBe('')
+  })
 })
 
 describe('execNode', function() {
