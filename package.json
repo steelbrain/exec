@@ -1,6 +1,6 @@
 {
   "name": "sb-exec",
-  "version": "1.0.5",
+  "version": "2.0.0",
   "description": "Process spawning APIs beautified",
   "main": "lib/index.js",
   "scripts": {
