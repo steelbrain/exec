@@ -12,7 +12,7 @@
     "eslint": "^2.5.3",
     "babel-eslint": "^6.0.0",
     "babel-preset-steelbrain": "^2.0.1",
-    "eslint-config-airbnb": "^6.2.0",
+    "eslint-config-airbnb": "^9.0.0",
     "eslint-plugin-react": "^4.2.3",
     "ucompiler": "^3.1.8",
     "ucompiler-plugin-babel": "^3.1.1"
