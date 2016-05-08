@@ -19,6 +19,8 @@ environment:
 
 install:
   - ps: Install-Product node 5
+  - ps: npm install
+  - ps: npm run compile
 
 build_script:
   - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/atom/ci/master/build-package.ps1'))
