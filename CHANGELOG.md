@@ -1,3 +1,7 @@
+## 2.0.2
+
+- Add `ignoreExitCode` option to ignore exit code when the stdout stream is empty
+
 ## 2.0.1
 
 - Workaround several bugs on windows

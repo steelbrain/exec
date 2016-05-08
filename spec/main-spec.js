@@ -109,6 +109,10 @@ describe('exec', function() {
       expect(_.message).toContain('code: 2')
     }
   })
+  it('does not cry if stream is stdout, exit code is non-zero and ignoreExitCode is set to true', async function() {
+    const path = Path.join(__dirname, 'fixtures', 'non-zero.js')
+    await execNode(path, [], { ignoreExitCode: true })
+  })
   it('returns exitCode for `both` streams', async function() {
     const path = Path.join(__dirname, 'fixtures', 'non-zero.js')
     const output = await execNode(path, [], { stream: 'both' })
