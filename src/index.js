@@ -3,7 +3,7 @@
 /* @flow */
 
 import { spawn } from 'child_process'
-import { getSpawnOptions, validate } from './helpers'
+import { getSpawnOptions, validate, escape } from './helpers'
 import type { Exec$Options, Exec$Result } from './types'
 
 async function exec(
@@ -15,7 +15,7 @@ async function exec(
   const spawnOptions = await getSpawnOptions(options)
   if (process.platform === 'win32' && !options.shell) {
     spawnOptions.windowsVerbatimArguments = true
-    parameters = ['/s', '/c', `"${[filePath].concat(parameters).join(' ')}"`]
+    parameters = ['/s', '/c', `"${[filePath].concat(parameters).map(escape).join(' ')}"`]
     filePath = process.env.comspec || 'cmd.exe'
   }
 

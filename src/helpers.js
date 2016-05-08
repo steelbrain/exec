@@ -73,3 +73,7 @@ export async function getSpawnOptions(options: Exec$Options): Promise {
   }
   return spawnOptions
 }
+
+export function escape(item: string): string {
+  return `"${item.replace(/"/g, '\\"')}"`
+}
