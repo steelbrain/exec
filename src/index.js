@@ -13,7 +13,7 @@ async function exec(
 ): Promise<Exec$Result> {
   validate(filePath, parameters, options)
   const spawnOptions = await getSpawnOptions(options)
-  if (process.platform === 'win32') {
+  if (process.platform === 'win32' && !options.shell) {
     spawnOptions.windowsVerbatimArguments = true
     parameters = ['/s', '/c', `"${[filePath].concat(parameters).join(' ')}"`]
     filePath = process.env.comspec || 'cmd.exe'
