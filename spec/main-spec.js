@@ -137,3 +137,16 @@ describe('execNode', function() {
     expect(result).toBe('STDOUT')
   })
 })
+
+if (process.platform === 'win32') {
+  describe('Fixes for windows', function() {
+    it('works with paths that have spaces in name', async function() {
+      const result = await exec(Path.join(__dirname, './fixtures/yes spaces/hello.exe'))
+      expect(result).toBe('Hello World')
+    })
+    it('works with paths without pathext', async function() {
+      const result = await exec(Path.join(__dirname, './fixtures/yes spaces/hello.exe'))
+      expect(result).toBe('Hello World')
+    })
+  })
+}

@@ -1,3 +1,7 @@
+## 2.0.1
+
+- Workaround several bugs on windows
+
 ## 2.0.0
 
 - Add `exitCode` to return output when stream is `both`
