@@ -44,7 +44,7 @@ async function exec(
           reject(new Error(data.stderr.join('').trim()))
         } else {
           const stdout = data.stdout.join('').trim()
-          if (exitCode !== 0) {
+          if (exitCode !== 0 && !options.ignoreExitCode) {
             console.error('[atom-linter] Process exited with no-zero code, stdout: ', stdout)
             reject(new Error(`Process exited with non-zero code: ${exitCode}`))
           } else {

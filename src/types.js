@@ -12,7 +12,8 @@ export type Exec$Options = {
     prepend?: boolean
   },
   throwOnStdErr?: boolean,
-  allowEmptyStderr?: boolean
+  allowEmptyStderr?: boolean,
+  ignoreExitCode?: boolean
 }
 
 export type Exec$Result = string | {stdout: string, stderr: string}

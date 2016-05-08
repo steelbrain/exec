@@ -45,6 +45,9 @@ export function validate(filePath: string, parameters: Array<string>, options: E
   if (typeof options.allowEmptyStderr !== 'undefined') {
     invariant(typeof options.allowEmptyStderr === 'boolean', 'options.throwWhenEmptyStderr must be a boolean')
   } else options.allowEmptyStderr = false
+  if (typeof options.ignoreExitCode !== 'undefined') {
+    invariant(typeof options.ignoreExitCode === 'boolean', 'options.ignoreExitCode must be a boolean')
+  } else options.ignoreExitCode = false
 }
 
 export async function getSpawnOptions(options: Exec$Options): Promise {
