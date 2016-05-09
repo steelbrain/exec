@@ -149,7 +149,7 @@ if (process.platform === 'win32') {
       expect(result).toBe('Hello World')
     })
     it('works with paths without pathext', async function() {
-      const result = await exec(Path.join(__dirname, './fixtures/yes spaces/hello.exe'))
+      const result = await exec(Path.join(__dirname, './fixtures/yes spaces/hello'))
       expect(result).toBe('Hello World')
     })
   })
