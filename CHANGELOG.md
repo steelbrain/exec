@@ -1,3 +1,7 @@
+## 2.0.3
+
+- Bump `consistent-env` version to include bugfixes
+
 ## 2.0.2
 
 - Add `ignoreExitCode` option to ignore exit code when the stdout stream is empty
