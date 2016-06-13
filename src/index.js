@@ -18,6 +18,7 @@ async function exec(
     parameters = ['/s', '/c', `"${[filePath].concat(parameters).map(escape).join(' ')}"`]
     filePath = process.env.comspec || 'cmd.exe'
   }
+  delete spawnOptions.timeout
 
   return await new Promise(function(resolve, reject) {
     const spawnedProcess = spawn(filePath, parameters, spawnOptions)
