@@ -1,1 +1,1 @@
-console.log(process.argv.slice(1))
+console.log.apply(console, process.argv.slice(2))

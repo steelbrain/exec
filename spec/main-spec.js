@@ -141,6 +141,11 @@ describe('execNode', function() {
     const output = await execNode(path, [], { stream: 'stderr', allowEmptyStderr: true })
     expect(output).toBe('')
   })
+  it('automatically converts non-stringish parameters to string', async function() {
+    const path = Path.join(__dirname, 'fixtures', 'env-coerce.js')
+    const output = await execNode(path, [2, 3, 2.2, false])
+    expect(output).toBe('2 3 2.2 false')
+  })
 })
 
 if (process.platform === 'win32') {
