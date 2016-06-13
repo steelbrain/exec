@@ -100,6 +100,14 @@ describe('exec', function() {
     }, env: { PATH } })
     expect(result).toBe('HEY')
   })
+})
+
+describe('execNode', function() {
+  it('is a sugar method that uses exec', async function() {
+    const result = await execNode(PATH_NODE)
+    expect(result).toBe('STDOUT')
+  })
+
   it('cries if stream is stdout and exit code is non-zero', async function() {
     const path = Path.join(__dirname, 'fixtures', 'non-zero.js')
     try {
@@ -132,13 +140,6 @@ describe('exec', function() {
     const path = Path.join(__dirname, 'fixtures', 'non-zero.js')
     const output = await execNode(path, [], { stream: 'stderr', allowEmptyStderr: true })
     expect(output).toBe('')
-  })
-})
-
-describe('execNode', function() {
-  it('is a sugar method that uses exec', async function() {
-    const result = await execNode(PATH_NODE)
-    expect(result).toBe('STDOUT')
   })
 })
 
