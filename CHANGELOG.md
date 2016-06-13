@@ -1,3 +1,8 @@
+## 2.0.4
+
+- Fix a possible error where timeout would be passed to node
+- Add support for non-string parameters ( Fixes #27 )
+
 ## 2.0.3
 
 - Bump `consistent-env` version to include bugfixes
