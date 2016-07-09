@@ -1,5 +1,3 @@
-'use strict'
-
 /* @flow */
 
 import invariant from 'assert'
@@ -8,16 +6,10 @@ import getNpmPath from 'sb-npm-path'
 import type { Exec$Options } from './types'
 
 const PATH_SEPARATOR = process.platform === 'win32' ? ';' : ':'
-export const assign = Object.assign || function(target, source) {
-  for (const key in source) {
-    if (source.hasOwnProperty(key)) {
-      target[key] = source[key]
-    }
-  }
-  return target
-}
 
 export function validate(filePath: string, parameters: Array<string>, options: Exec$Options) {
+  /* eslint-disable no-param-reassign */
+
   invariant(typeof filePath === 'string' && filePath, 'filePath must be a string')
   invariant(Array.isArray(parameters), 'parameters must be an array')
   invariant(typeof options === 'object' && options, 'options must be an object')
@@ -50,15 +42,16 @@ export function validate(filePath: string, parameters: Array<string>, options: E
   } else options.ignoreExitCode = false
 }
 
-export async function getSpawnOptions(options: Exec$Options): Promise {
-  const spawnOptions = assign({}, options, {
-    env: assign(await getEnv(), options.env)
+export async function getSpawnOptions(options: Exec$Options): Promise<Object> {
+  const spawnOptions = Object.assign({}, options, {
+    env: Object.assign(await getEnv(), options.env),
   })
   const local = options.local
   if (local) {
     const npmPath = await getNpmPath.async(local.directory)
+    /* eslint-disable no-restricted-syntax */
     for (const key in spawnOptions.env) {
-      if (spawnOptions.env.hasOwnProperty(key) && key.toUpperCase() === 'PATH') {
+      if ({}.hasOwnProperty.call(spawnOptions.env, key) && key.toUpperCase() === 'PATH') {
         const value = spawnOptions.env[key]
         spawnOptions.env[key] = local.prepend ? npmPath + PATH_SEPARATOR + value : value + PATH_SEPARATOR + npmPath
         break

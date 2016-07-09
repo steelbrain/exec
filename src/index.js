@@ -1,5 +1,3 @@
-'use strict'
-
 /* @flow */
 
 import { spawn } from 'child_process'
@@ -7,12 +5,14 @@ import { getSpawnOptions, validate, escape } from './helpers'
 import type { Exec$Options, Exec$Result } from './types'
 
 async function exec(
-  filePath: string,
-  parameters: Array<string> = [],
+  givenFilePath: string,
+  givenParameters: Array<string> = [],
   options: Exec$Options = {}
 ): Promise<Exec$Result> {
-  validate(filePath, parameters, options)
+  validate(givenFilePath, givenParameters, options)
   const spawnOptions = await getSpawnOptions(options)
+  let filePath = givenFilePath
+  let parameters = givenParameters
   if (process.platform === 'win32' && !options.shell) {
     spawnOptions.windowsVerbatimArguments = true
     parameters = ['/s', '/c', `"${[filePath].concat(parameters).map(escape).join(' ')}"`]

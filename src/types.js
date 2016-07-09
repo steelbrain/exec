@@ -1,5 +1,3 @@
-'use strict'
-
 /* @flow */
 
 export type Exec$Options = {
