@@ -1,8 +1,8 @@
 'use babel'
 
 import Path from 'path'
+import { it } from 'jasmine-fix'
 import { exec, execNode } from '../'
-import { it } from './helpers'
 
 const PATH_NODE = Path.join(__dirname, 'fixtures', 'node.js')
 const PATH_WAIT = Path.join(__dirname, 'fixtures', 'wait.js')
@@ -66,7 +66,7 @@ describe('exec', function() {
   it('passes env properly', async function() {
     const result = await exec(process.execPath, [PATH_ENV], { env: {
       SOMETHING: 'Hello',
-      SOMETHING_ELSE: 'Dolly'
+      SOMETHING_ELSE: 'Dolly',
     } })
     expect(result).toBe('Hello\nDolly')
   })
@@ -74,14 +74,15 @@ describe('exec', function() {
   it('works well with stdio: inherit', async function() {
     const result = await exec(process.execPath, [PATH_ENV], { env: {
       SOMETHING: 'Hello',
-      SOMETHING_ELSE: 'Dolly'
-    }, stdio: 'inherit' })
+      SOMETHING_ELSE: 'Dolly',
+    },
+      stdio: 'inherit' })
     expect(result).toBe('')
   })
 
   it('supports executing modules from local paths', async function() {
     const result = await exec('sb-exec-test', [], { local: {
-      directory: Path.join(__dirname, 'fixtures', 'path')
+      directory: Path.join(__dirname, 'fixtures', 'path'),
     } })
     expect(result).toBe('HEY')
   })
@@ -89,15 +90,17 @@ describe('exec', function() {
     const PATH = Path.join(__dirname, 'fixtures', 'path', 'node_modules', '.bin')
     const result = await exec('sb-exec-test', [], { local: {
       directory: Path.join(__dirname, 'fixtures', 'deep'),
-      prepend: true
-    }, env: { PATH } })
+      prepend: true,
+    },
+      env: { PATH } })
     expect(result).toBe('HEY2')
   })
   it('supports append', async function() {
     const PATH = Path.join(__dirname, 'fixtures', 'path', 'node_modules', '.bin')
     const result = await exec('sb-exec-test', [], { local: {
-      directory: Path.join(__dirname, 'fixtures', 'deep')
-    }, env: { PATH } })
+      directory: Path.join(__dirname, 'fixtures', 'deep'),
+    },
+      env: { PATH } })
     expect(result).toBe('HEY')
   })
 })

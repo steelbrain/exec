@@ -9,11 +9,12 @@
     "lint": "eslint ."
   },
   "engines": {
-    "node" : ">=6.0.0"
+    "node": ">=6.0.0"
   },
   "devDependencies": {
-    "eslint-config-steelbrain": "^1.0.1",
     "babel-preset-steelbrain": "^2.0.1",
+    "eslint-config-steelbrain": "^1.0.1",
+    "jasmine-fix": "^1.0.0",
     "ucompiler": "^3.1.8",
     "ucompiler-plugin-babel": "^3.1.1"
   },
