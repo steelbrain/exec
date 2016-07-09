@@ -49,10 +49,9 @@ export async function getSpawnOptions(options: Exec$Options): Promise<Object> {
   const local = options.local
   if (local) {
     const npmPath = await getNpmPath.async(local.directory)
-    const keys = Object.keys(spawnOptions.env)
-    for (let i = 0, length = keys.length, key; i < length; ++i) {
-      key = keys[i]
-      if (key.toLowerCase() === 'PATH') {
+    /* eslint-disable no-restricted-syntax */
+    for (const key in spawnOptions.env) {
+      if ({}.hasOwnProperty.call(spawnOptions.env, key) && key.toUpperCase() === 'PATH') {
         const value = spawnOptions.env[key]
         spawnOptions.env[key] = local.prepend ? npmPath + PATH_SEPARATOR + value : value + PATH_SEPARATOR + npmPath
         break
