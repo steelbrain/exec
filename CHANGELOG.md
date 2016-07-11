@@ -1,3 +1,7 @@
+## 2.0.5
+
+- Remove `.flowconfig` from NPM package
+
 ## 2.0.4
 
 - Fix a possible error where timeout would be passed to node
