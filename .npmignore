@@ -3,3 +3,4 @@ node_modules
 .idea
 /src
 /spec
+.DS_Store
