@@ -12,7 +12,7 @@
     "node": ">=6.0.0"
   },
   "devDependencies": {
-    "babel-preset-steelbrain": "^2.0.1",
+    "babel-preset-steelbrain": "^4.0.0",
     "eslint-config-steelbrain": "^1.0.1",
     "jasmine-fix": "^1.0.0",
     "ucompiler": "^3.1.8",
