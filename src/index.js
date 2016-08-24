@@ -15,7 +15,7 @@ async function exec(
   let parameters = givenParameters
   if (process.platform === 'win32' && !options.shell) {
     spawnOptions.windowsVerbatimArguments = true
-    parameters = ['/s', '/c', `"${[filePath].concat(parameters).map(escape).join(' ')}"`]
+    parameters = ['/s', '/c', `"${filePath} ${parameters.map(escape).join(' ')}"`]
     filePath = process.env.comspec || 'cmd.exe'
   }
   delete spawnOptions.timeout
