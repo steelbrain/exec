@@ -15,6 +15,7 @@ async function exec(
   let parameters = givenParameters
   if (process.platform === 'win32' && !options.shell) {
     spawnOptions.windowsVerbatimArguments = true
+    // NOTE: Keep filePath and parameters as one item or it'll ressurect steelbrain/exec#36
     parameters = ['/s', '/c', `"${filePath} ${parameters.map(escape).join(' ')}"`]
     filePath = process.env.comspec || 'cmd.exe'
   }
