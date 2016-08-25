@@ -1,3 +1,7 @@
+## 3.0.0
+
+- Upgrade to `sb-npm-path@2.x` ( API BREAKING )
+
 ## 2.0.5
 
 - Remove `.flowconfig` from NPM package
