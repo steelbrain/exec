@@ -8,10 +8,11 @@ import type { Exec$Options, Exec$ValidOptions } from './types'
 const PATH_SEPARATOR = process.platform === 'win32' ? ';' : ':'
 
 export function validate(filePath: string, parameters: Array<string>, givenOptions: Exec$Options): Exec$ValidOptions {
-  const options = givenOptions
+  const options = Object.assign({}, givenOptions)
 
   invariant(typeof filePath === 'string' && filePath, 'filePath must be a string')
   invariant(Array.isArray(parameters), 'parameters must be an array')
+
   invariant(typeof options === 'object' && options, 'options must be an object')
   if (options.stream) {
     const stream = options.stream
