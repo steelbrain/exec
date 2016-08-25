@@ -1,7 +1,13 @@
+# Changelog
+
+## 3.0.1
+
+- Correctly handle spaces in the program path
+
 ## 3.0.0
 
 - Upgrade to `sb-npm-path@2.x` ( API BREAKING )
-- Fix a bug on Windows where it would crash for paths with spaces
+- Fix a bug on Windows where it would run certain programs incorrectly
 
 ## 2.0.5
 
@@ -14,7 +20,7 @@
 
 ## 2.0.3
 
-- Bump `consistent-env` version to include bugfixes
+- Bump `consistent-env` version to include bug fixes
 
 ## 2.0.2
 

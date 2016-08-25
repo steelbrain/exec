@@ -15,8 +15,13 @@ async function exec(
   let parameters = givenParameters
   if (process.platform === 'win32' && !options.shell) {
     spawnOptions.windowsVerbatimArguments = true
-    // NOTE: Keep filePath and parameters as one item or it'll ressurect steelbrain/exec#36
-    parameters = ['/s', '/c', `"${filePath} ${parameters.map(escape).join(' ')}"`]
+    let cmdArgs = [filePath]
+    // filePath must be escaped if it has a \s in it, otherwise it must not
+    if (/\s/.test(filePath)) {
+      cmdArgs = cmdArgs.map(escape)
+    }
+    cmdArgs = cmdArgs.concat(parameters.map(escape))
+    parameters = ['/s', '/c', `"${cmdArgs.join(' ')}"`]
     filePath = process.env.comspec || 'cmd.exe'
   }
   delete spawnOptions.timeout
