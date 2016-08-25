@@ -13,6 +13,8 @@ dependencies:
 
 test:
   override:
+    - npm run flowcheck
+    - npm run eslint
     - npm test
 
 machine:
