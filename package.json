@@ -4,8 +4,8 @@
   "description": "Process spawning APIs beautified",
   "main": "lib/index.js",
   "scripts": {
-    "lint": "npm run flow && npm run eslint",
-    "flowcheck": "flow check | grep -q '0 errors'",
+    "lint": "npm run flowcheck && npm run eslint",
+    "flowcheck": "flow check",
     "eslint": "eslint .",
     "test": "apm test",
     "clean": "rm -rf lib",
