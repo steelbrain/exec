@@ -7,12 +7,12 @@ dependencies:
     - node --version
     - npm --version
     - atom --version
-    - rm -rf node_modules; npm install
+    - npm prune
+    - npm install
     - npm run compile
 
 test:
   override:
-    - npm run lint
     - npm test
 
 machine:
