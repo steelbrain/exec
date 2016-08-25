@@ -2,14 +2,14 @@
 
 import { spawn } from 'child_process'
 import { getSpawnOptions, validate, escape } from './helpers'
-import type { Exec$Options, Exec$Result } from './types'
+import type { Exec$Options, Exec$ValidOptions, Exec$Result } from './types'
 
 async function exec(
   givenFilePath: string,
   givenParameters: Array<string> = [],
-  options: Exec$Options = {}
+  givenOptions: Exec$Options = {}
 ): Promise<Exec$Result> {
-  validate(givenFilePath, givenParameters, options)
+  const options: Exec$ValidOptions = validate(givenFilePath, givenParameters, givenOptions)
   const spawnOptions = await getSpawnOptions(options)
   let filePath = givenFilePath
   let parameters = givenParameters

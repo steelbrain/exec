@@ -3,12 +3,12 @@
 import invariant from 'assert'
 import { async as getEnv } from 'consistent-env'
 import { getPathAsync } from 'sb-npm-path'
-import type { Exec$Options } from './types'
+import type { Exec$Options, Exec$ValidOptions } from './types'
 
 const PATH_SEPARATOR = process.platform === 'win32' ? ';' : ':'
 
-export function validate(filePath: string, parameters: Array<string>, options: Exec$Options) {
-  /* eslint-disable no-param-reassign */
+export function validate(filePath: string, parameters: Array<string>, givenOptions: Exec$Options): Exec$ValidOptions {
+  const options = givenOptions
 
   invariant(typeof filePath === 'string' && filePath, 'filePath must be a string')
   invariant(Array.isArray(parameters), 'parameters must be an array')
@@ -33,6 +33,9 @@ export function validate(filePath: string, parameters: Array<string>, options: E
   if (typeof options.local !== 'undefined') {
     invariant(typeof options.local === 'object', 'options.local must be an object')
     invariant(typeof options.local.directory === 'string', 'options.local.directory must be a string')
+    if (typeof options.local.prepend !== 'undefined') {
+      invariant(typeof options.local.prepend === 'boolean', 'options.local.prepend must be a boolean')
+    } else options.local.prepend = false
   }
   if (typeof options.allowEmptyStderr !== 'undefined') {
     invariant(typeof options.allowEmptyStderr === 'boolean', 'options.throwWhenEmptyStderr must be a boolean')
@@ -41,10 +44,10 @@ export function validate(filePath: string, parameters: Array<string>, options: E
     invariant(typeof options.ignoreExitCode === 'boolean', 'options.ignoreExitCode must be a boolean')
   } else options.ignoreExitCode = false
 
-  /* eslint-enable no-param-reassign */
+  return options
 }
 
-function caseInsensitiveEnvMerge(envA, envB) {
+function caseInsensitiveEnvMerge(envA: Object, envB: Object) {
   // Takes in two environments and creates a merged one with all UPPER CASE keys
   const mergedEnv = {}
   Object.keys(envA).forEach(key => {
@@ -56,7 +59,7 @@ function caseInsensitiveEnvMerge(envA, envB) {
   return mergedEnv
 }
 
-export async function getSpawnOptions(options: Exec$Options): Promise<Object> {
+export async function getSpawnOptions(options: Exec$ValidOptions): Promise<Object> {
   const spawnOptions = Object.assign({}, options, {
     env: caseInsensitiveEnvMerge(await getEnv(), options.env),
   })
