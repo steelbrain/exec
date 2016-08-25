@@ -1,6 +1,7 @@
 ## 3.0.0
 
 - Upgrade to `sb-npm-path@2.x` ( API BREAKING )
+- Fix a bug on Windows where it would crash for paths with spaces
 
 ## 2.0.5
 
