@@ -40,6 +40,8 @@ export function validate(filePath: string, parameters: Array<string>, options: E
   if (typeof options.ignoreExitCode !== 'undefined') {
     invariant(typeof options.ignoreExitCode === 'boolean', 'options.ignoreExitCode must be a boolean')
   } else options.ignoreExitCode = false
+
+  /* eslint-enable no-param-reassign */
 }
 
 export async function getSpawnOptions(options: Exec$Options): Promise<Object> {
