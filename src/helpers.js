@@ -44,9 +44,21 @@ export function validate(filePath: string, parameters: Array<string>, options: E
   /* eslint-enable no-param-reassign */
 }
 
+function caseInsensitiveEnvMerge(envA, envB) {
+  // Takes in two environments and creates a merged one with all UPPER CASE keys
+  const mergedEnv = {}
+  Object.keys(envA).forEach(key => {
+    mergedEnv[key.toUpperCase()] = envA[key]
+  })
+  Object.keys(envB).forEach(key => {
+    mergedEnv[key.toUpperCase()] = envB[key]
+  })
+  return mergedEnv
+}
+
 export async function getSpawnOptions(options: Exec$Options): Promise<Object> {
   const spawnOptions = Object.assign({}, options, {
-    env: Object.assign(await getEnv(), options.env),
+    env: caseInsensitiveEnvMerge(await getEnv(), options.env),
   })
   let npmPath
   const local = options.local
@@ -55,7 +67,7 @@ export async function getSpawnOptions(options: Exec$Options): Promise<Object> {
   }
   if (local && npmPath) {
     for (const key in spawnOptions.env) {
-      if ({}.hasOwnProperty.call(spawnOptions.env, key) && key.toUpperCase() === 'PATH') {
+      if ({}.hasOwnProperty.call(spawnOptions.env, key) && key === 'PATH') {
         const value = spawnOptions.env[key]
         spawnOptions.env[key] = local.prepend ? npmPath + PATH_SEPARATOR + value : value + PATH_SEPARATOR + npmPath
         break
