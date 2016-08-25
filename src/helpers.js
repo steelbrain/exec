@@ -2,7 +2,7 @@
 
 import invariant from 'assert'
 import { async as getEnv } from 'consistent-env'
-import getNpmPath from 'sb-npm-path'
+import { getPathAsync } from 'sb-npm-path'
 import type { Exec$Options } from './types'
 
 const PATH_SEPARATOR = process.platform === 'win32' ? ';' : ':'
@@ -46,10 +46,12 @@ export async function getSpawnOptions(options: Exec$Options): Promise<Object> {
   const spawnOptions = Object.assign({}, options, {
     env: Object.assign(await getEnv(), options.env),
   })
+  let npmPath
   const local = options.local
   if (local) {
-    const npmPath = await getNpmPath.async(local.directory)
-    /* eslint-disable no-restricted-syntax */
+    npmPath = await getPathAsync(local.directory)
+  }
+  if (local && npmPath) {
     for (const key in spawnOptions.env) {
       if ({}.hasOwnProperty.call(spawnOptions.env, key) && key.toUpperCase() === 'PATH') {
         const value = spawnOptions.env[key]
