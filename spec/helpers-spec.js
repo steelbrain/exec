@@ -7,7 +7,7 @@ describe('Helpers', function() {
     it('returns env as is if not windows', function() {
       expect(Helpers.mergeEnv({ PATH: 'a;b' }, { PATH: 'c' })).toEqual({ PATH: 'c' })
       expect(Helpers.mergeEnv({ PATH: 'a;b' }, { Path: 'c' })).toEqual({ PATH: 'a;b', Path: 'c' })
-      expect(Helpers.mergeEnv({ PATH: 'a;b', Path: 'c' }, { PATH: 'd' })).toEqual({ PATH: 'd', Path: 'c' })
+      expect(Helpers.mergeEnv({ PATH: 'a;b', Path: 'c', a: 'b' }, { PATH: 'd', b: 'c' })).toEqual({ PATH: 'd', Path: 'c', a: 'b', b: 'c' })
     })
     it('merges env on windows', function() {
       const oldPlatform = process.platform
@@ -20,8 +20,8 @@ describe('Helpers', function() {
       })
       expect(Helpers.mergeEnv({ PATH: 'a;b' }, { PATH: 'c' })).toEqual({ PATH: 'a;b;c' })
       expect(Helpers.mergeEnv({ PATH: 'a;b' }, { Path: 'c' })).toEqual({ PATH: 'a;b;c' })
-      expect(Helpers.mergeEnv({ PATH: 'a;b', Path: 'c' }, { PATH: 'd' })).toEqual({ PATH: 'a;b;c;d' })
-      expect(Helpers.mergeEnv({ PATH: 'a;b', Path: 'c' }, { })).toEqual({ PATH: 'a;b;c' })
+      expect(Helpers.mergeEnv({ PATH: 'a;b', Path: 'c', e: 'f' }, { PATH: 'd', e: 'g' })).toEqual({ PATH: 'a;b;c;d', e: 'g' })
+      expect(Helpers.mergeEnv({ PATH: 'a;b', Path: 'c', a: 'b', c: 'd' }, { })).toEqual({ PATH: 'a;b;c', a: 'b', c: 'd' })
       platform = oldPlatform
     })
   })
