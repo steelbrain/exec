@@ -2,13 +2,13 @@
 
 import { spawn } from 'child_process'
 import { getSpawnOptions, validate, escape } from './helpers'
-import type { OptionsAccepted, Exec$Result } from './types'
+import type { OptionsAccepted, Result } from './types'
 
 async function exec(
   givenFilePath: string,
   givenParameters: Array<string> = [],
   givenOptions: OptionsAccepted = {}
-): Promise<Exec$Result> {
+): Promise<Result> {
   const options = validate(givenFilePath, givenParameters, givenOptions)
   const nodeSpawnOptions = await getSpawnOptions(options)
   let filePath = givenFilePath
@@ -91,7 +91,7 @@ async function exec(
   })
 }
 
-function execNode(filePath: string, parameters: Array<string> = [], options: OptionsAccepted = {}): Promise<Exec$Result> {
+function execNode(filePath: string, parameters: Array<string> = [], options: OptionsAccepted = {}): Promise<Result> {
   validate(filePath, parameters, options)
   return exec(process.execPath, [filePath].concat(parameters), options)
 }

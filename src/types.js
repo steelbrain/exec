@@ -28,4 +28,4 @@ export type Options = {
   ignoreExitCode: boolean
 }
 
-export type Exec$Result = string | {stdout: string, stderr: string}
+export type Result = string | { stdout: string, stderr: string, exitCode: number }
