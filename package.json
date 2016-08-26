@@ -37,6 +37,7 @@
   "homepage": "https://github.com/steelbrain/exec#readme",
   "dependencies": {
     "consistent-env": "^1.2.0",
+    "lodash.uniq": "^4.5.0",
     "sb-npm-path": "^2.0.0"
   }
 }

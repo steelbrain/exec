@@ -1,6 +1,7 @@
 /* @flow */
 
 import invariant from 'assert'
+import arrayUnique from 'lodash.uniq'
 import { async as getEnv } from 'consistent-env'
 import { getPathAsync } from 'sb-npm-path'
 import type { OptionsAccepted, Options } from './types'
@@ -50,21 +51,37 @@ export function validate(filePath: string, parameters: Array<string>, givenOptio
   return options
 }
 
-function caseInsensitiveEnvMerge(envA: Object, envB: Object) {
-  // Takes in two environments and creates a merged one with all UPPER CASE keys
+function mergePath(a: string, b: string): string {
+  return arrayUnique(a.split(';').concat(b.split(';')).map(i => i.trim()).filter(i => i))
+}
+
+function mergeEnv(envA: Object, envB: Object) {
+  if (process.platform !== 'win32') {
+    return Object.assign(envA, envB)
+  }
+
+  // NOTE: Merge PATH and Path on windows
   const mergedEnv = {}
-  Object.keys(envA).forEach(key => {
-    mergedEnv[key.toUpperCase()] = envA[key]
-  })
-  Object.keys(envB).forEach(key => {
-    mergedEnv[key.toUpperCase()] = envB[key]
-  })
+  for (const key in envA) {
+    if (key.toUpperCase() !== 'PATH') {
+      mergedEnv[key] = envA[key]
+      continue
+    }
+    mergedEnv.PATH = mergePath(mergedEnv.PATH || '', envA[key])
+  }
+  for (const key in envB) {
+    if (key.toUpperCase() !== 'PATH') {
+      mergedEnv[key] = envB[key]
+      continue
+    }
+    mergedEnv.PATH = mergePath(mergedEnv.PATH || '', envB[key])
+  }
   return mergedEnv
 }
 
 export async function getSpawnOptions(options: Options): Promise<Object> {
   const spawnOptions = Object.assign({}, options, {
-    env: caseInsensitiveEnvMerge(await getEnv(), options.env),
+    env: mergeEnv(await getEnv(), options.env),
   })
   let npmPath
   const local = options.local
