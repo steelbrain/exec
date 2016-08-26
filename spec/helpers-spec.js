@@ -5,9 +5,18 @@ import * as Helpers from '../src/helpers'
 describe('Helpers', function() {
   describe('mergeEnv', function() {
     it('returns env as is if not windows', function() {
+      const oldPlatform = process.platform
+      let platform = 'darwin'
+      // $FlowIgnore: Flow is dumb?
+      Object.defineProperty(process, 'platform', {
+        get() {
+          return platform
+        },
+      })
       expect(Helpers.mergeEnv({ PATH: 'a;b' }, { PATH: 'c' })).toEqual({ PATH: 'c' })
       expect(Helpers.mergeEnv({ PATH: 'a;b' }, { Path: 'c' })).toEqual({ PATH: 'a;b', Path: 'c' })
       expect(Helpers.mergeEnv({ PATH: 'a;b', Path: 'c', a: 'b' }, { PATH: 'd', b: 'c' })).toEqual({ PATH: 'd', Path: 'c', a: 'b', b: 'c' })
+      platform = oldPlatform
     })
     it('merges env on windows', function() {
       const oldPlatform = process.platform
