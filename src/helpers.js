@@ -67,14 +67,14 @@ export function mergeEnv(envA: Object, envB: Object): Object {
       mergedEnv[key] = envA[key]
       continue
     }
-    mergedEnv.PATH = mergePath(mergedEnv.PATH || '', envA[key])
+    mergedEnv.PATH = mergePath(mergedEnv.PATH, envA[key])
   }
   for (const key in envB) {
     if (key.toUpperCase() !== 'PATH') {
       mergedEnv[key] = envB[key]
       continue
     }
-    mergedEnv.PATH = mergePath(mergedEnv.PATH || '', envB[key])
+    mergedEnv.PATH = mergePath(mergedEnv.PATH, envB[key])
   }
   return mergedEnv
 }
