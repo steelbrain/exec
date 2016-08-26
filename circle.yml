@@ -13,7 +13,7 @@ dependencies:
 
 test:
   override:
-    - npm run eslint
+    - npm run lint
     - npm test
 
 machine:
