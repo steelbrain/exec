@@ -2,3 +2,4 @@
 .idea
 /lib
 .DS_Store
+*.log

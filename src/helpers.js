@@ -1,17 +1,21 @@
 /* @flow */
 
 import invariant from 'assert'
+import arrayUnique from 'lodash.uniq'
 import { async as getEnv } from 'consistent-env'
 import { getPathAsync } from 'sb-npm-path'
-import type { Exec$Options } from './types'
+import type { OptionsAccepted, Options } from './types'
 
 const PATH_SEPARATOR = process.platform === 'win32' ? ';' : ':'
 
-export function validate(filePath: string, parameters: Array<string>, options: Exec$Options) {
-  /* eslint-disable no-param-reassign */
+export function validate(filePath: string, parameters: Array<string>, givenOptionsAccepted: OptionsAccepted): Options {
+  // NOTE: We need to specify type of this to object to supress some warnings that rise from the merge (Flow, duh)
+  const defaultOptions: Object = {}
+  const options: Options = Object.assign(defaultOptions, givenOptionsAccepted)
 
   invariant(typeof filePath === 'string' && filePath, 'filePath must be a string')
   invariant(Array.isArray(parameters), 'parameters must be an array')
+
   invariant(typeof options === 'object' && options, 'options must be an object')
   if (options.stream) {
     const stream = options.stream
@@ -33,6 +37,9 @@ export function validate(filePath: string, parameters: Array<string>, options: E
   if (typeof options.local !== 'undefined') {
     invariant(typeof options.local === 'object', 'options.local must be an object')
     invariant(typeof options.local.directory === 'string', 'options.local.directory must be a string')
+    if (typeof options.local.prepend !== 'undefined') {
+      invariant(typeof options.local.prepend === 'boolean', 'options.local.prepend must be a boolean')
+    } else options.local.prepend = false
   }
   if (typeof options.allowEmptyStderr !== 'undefined') {
     invariant(typeof options.allowEmptyStderr === 'boolean', 'options.throwWhenEmptyStderr must be a boolean')
@@ -41,12 +48,40 @@ export function validate(filePath: string, parameters: Array<string>, options: E
     invariant(typeof options.ignoreExitCode === 'boolean', 'options.ignoreExitCode must be a boolean')
   } else options.ignoreExitCode = false
 
-  /* eslint-enable no-param-reassign */
+  return options
 }
 
-export async function getSpawnOptions(options: Exec$Options): Promise<Object> {
+export function mergePath(a: string, b: string): string {
+  return arrayUnique(a.split(';').concat(b.split(';')).map(i => i.trim()).filter(i => i)).join(';')
+}
+
+export function mergeEnv(envA: Object, envB: Object): Object {
+  if (process.platform !== 'win32') {
+    return Object.assign(envA, envB)
+  }
+
+  // NOTE: Merge PATH and Path on windows
+  const mergedEnv = { PATH: '' }
+  for (const key in envA) {
+    if (key.toUpperCase() !== 'PATH') {
+      mergedEnv[key] = envA[key]
+      continue
+    }
+    mergedEnv.PATH = mergePath(mergedEnv.PATH || '', envA[key])
+  }
+  for (const key in envB) {
+    if (key.toUpperCase() !== 'PATH') {
+      mergedEnv[key] = envB[key]
+      continue
+    }
+    mergedEnv.PATH = mergePath(mergedEnv.PATH || '', envB[key])
+  }
+  return mergedEnv
+}
+
+export async function getSpawnOptions(options: Options): Promise<Object> {
   const spawnOptions = Object.assign({}, options, {
-    env: Object.assign(await getEnv(), options.env),
+    env: mergeEnv(await getEnv(), options.env),
   })
   let npmPath
   const local = options.local
@@ -55,14 +90,14 @@ export async function getSpawnOptions(options: Exec$Options): Promise<Object> {
   }
   if (local && npmPath) {
     for (const key in spawnOptions.env) {
-      if ({}.hasOwnProperty.call(spawnOptions.env, key) && key.toUpperCase() === 'PATH') {
+      if ({}.hasOwnProperty.call(spawnOptions.env, key) && key === 'PATH') {
         const value = spawnOptions.env[key]
         spawnOptions.env[key] = local.prepend ? npmPath + PATH_SEPARATOR + value : value + PATH_SEPARATOR + npmPath
         break
       }
     }
   }
-  spawnOptions.timeout = null
+  delete spawnOptions.timeout
   if (spawnOptions.env.OS) {
     spawnOptions.env.OS = undefined
   }

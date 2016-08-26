@@ -4,7 +4,8 @@
   "description": "Process spawning APIs beautified",
   "main": "lib/index.js",
   "scripts": {
-    "test": "(apm test) && (flow check | grep -q '0 errors') && (eslint . )",
+    "lint": "(flow check) && (eslint .)",
+    "test": "apm test",
     "clean": "rm -rf lib",
     "compile": "npm run clean && babel src --out-dir lib",
     "watch": "npm run clean && babel src --out-dir lib --watch"
@@ -36,6 +37,7 @@
   "homepage": "https://github.com/steelbrain/exec#readme",
   "dependencies": {
     "consistent-env": "^1.2.0",
+    "lodash.uniq": "^4.5.0",
     "sb-npm-path": "^2.0.0"
   }
 }

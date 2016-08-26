@@ -11,7 +11,7 @@ npm install --save sb-exec
 ## API
 
 ```js
-type $Options = {
+type $OptionsAccepted = {
   timeout?: number | Infinity,
   stream?: 'stdout' | 'stderr'  | 'both',
   env: Object,
@@ -24,8 +24,8 @@ type $Options = {
   allowEmptyStderr?: boolean = false,
   ignoreExitCode?: boolean
 } // Also supports all options of child_process::spawn
-export function exec(filePath: string, parameters: array, options: $Options)
-export function execNode(filePath: string, parameters: array, options: $Options)
+export function exec(filePath: string, parameters: array, options: $OptionsAccepted)
+export function execNode(filePath: string, parameters: array, options: $OptionsAccepted)
 ```
 
 ## Explanation

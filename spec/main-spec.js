@@ -1,8 +1,9 @@
-'use babel'
+/* @flow */
 
 import Path from 'path'
+import invariant from 'assert'
 import { it } from 'jasmine-fix'
-import { exec, execNode } from '../'
+import { exec, execNode } from '../src'
 
 const PATH_NODE = Path.join(__dirname, 'fixtures', 'node.js')
 const PATH_WAIT = Path.join(__dirname, 'fixtures', 'wait.js')
@@ -30,6 +31,7 @@ describe('exec', function() {
 
   it('also supports giving out both streams at once', async function() {
     const result = await exec(process.execPath, [PATH_NODE, 'error'], { stream: 'both' })
+    invariant(typeof result === 'object' && result)
     expect(result.stderr).toBe('STDERR')
     expect(result.stdout).toBe('STDOUT')
   })
@@ -133,6 +135,7 @@ describe('execNode', function() {
   it('returns exitCode for `both` streams', async function() {
     const path = Path.join(__dirname, 'fixtures', 'non-zero.js')
     const output = await execNode(path, [], { stream: 'both' })
+    invariant(typeof output === 'object' && output)
     expect(output.exitCode).toBe(2)
   })
 
@@ -155,6 +158,7 @@ describe('execNode', function() {
 
   it('automatically converts non-stringish parameters to string', async function() {
     const path = Path.join(__dirname, 'fixtures', 'env-coerce.js')
+    // $FlowIgnore: We're passing wrong param type on purpose
     const output = await execNode(path, [2, 3, 2.2, false])
     expect(output).toBe('2 3 2.2 false')
   })

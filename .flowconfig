@@ -1,9 +1,11 @@
 [ignore]
-lib/*
+<PROJECT_ROOT>/lib/.*
 
 [include]
 
 [libs]
+decls
 
 [options]
 module.system=node
+suppress_comment= \\(.\\|\n\\)*\\$FlowIgnore
