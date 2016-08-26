@@ -2,19 +2,19 @@
 
 import { spawn } from 'child_process'
 import { getSpawnOptions, validate, escape } from './helpers'
-import type { Exec$Options, Exec$ValidOptions, Exec$Result } from './types'
+import type { OptionsAccepted, Exec$Result } from './types'
 
 async function exec(
   givenFilePath: string,
   givenParameters: Array<string> = [],
-  givenOptions: Exec$Options = {}
+  givenOptions: OptionsAccepted = {}
 ): Promise<Exec$Result> {
-  const options: Exec$ValidOptions = validate(givenFilePath, givenParameters, givenOptions)
-  const spawnOptions = await getSpawnOptions(options)
+  const options = validate(givenFilePath, givenParameters, givenOptions)
+  const nodeSpawnOptions = await getSpawnOptions(options)
   let filePath = givenFilePath
   let parameters = givenParameters
   if (process.platform === 'win32' && !options.shell) {
-    spawnOptions.windowsVerbatimArguments = true
+    nodeSpawnOptions.windowsVerbatimArguments = true
     let cmdArgs = [filePath]
     // filePath must be escaped if it has a \s in it, otherwise it must not
     if (/\s/.test(filePath)) {
@@ -24,10 +24,9 @@ async function exec(
     parameters = ['/s', '/c', `"${cmdArgs.join(' ')}"`]
     filePath = process.env.comspec || 'cmd.exe'
   }
-  delete spawnOptions.timeout
 
   return await new Promise(function(resolve, reject) {
-    const spawnedProcess = spawn(filePath, parameters, spawnOptions)
+    const spawnedProcess = spawn(filePath, parameters, nodeSpawnOptions)
     const data = { stdout: [], stderr: [] }
     let timeout
 
@@ -92,7 +91,7 @@ async function exec(
   })
 }
 
-function execNode(filePath: string, parameters: Array<string> = [], options: Exec$Options = {}): Promise<Exec$Result> {
+function execNode(filePath: string, parameters: Array<string> = [], options: OptionsAccepted = {}): Promise<Exec$Result> {
   validate(filePath, parameters, options)
   return exec(process.execPath, [filePath].concat(parameters), options)
 }

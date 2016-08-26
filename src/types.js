@@ -1,6 +1,6 @@
 /* @flow */
 
-export type Exec$Options = {
+export type OptionsAccepted = {
   stream?: 'stdout' | 'stderr' | 'both',
   timeout?: number,
   env?: Object,
@@ -14,7 +14,7 @@ export type Exec$Options = {
   ignoreExitCode?: boolean
 }
 
-export type Exec$ValidOptions = {
+export type Options = {
   stream: 'stdout' | 'stderr' | 'both',
   timeout: number,
   env: Object,

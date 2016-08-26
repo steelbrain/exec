@@ -3,12 +3,14 @@
 import invariant from 'assert'
 import { async as getEnv } from 'consistent-env'
 import { getPathAsync } from 'sb-npm-path'
-import type { Exec$Options, Exec$ValidOptions } from './types'
+import type { OptionsAccepted, Options } from './types'
 
 const PATH_SEPARATOR = process.platform === 'win32' ? ';' : ':'
 
-export function validate(filePath: string, parameters: Array<string>, givenOptions: Exec$Options): Exec$ValidOptions {
-  const options = Object.assign({}, givenOptions)
+export function validate(filePath: string, parameters: Array<string>, givenOptionsAccepted: OptionsAccepted): Options {
+  // NOTE: We need to specify type of this to object to supress some warnings that rise from the merge (Flow, duh)
+  const defaultOptions: Object = {}
+  const options: Options = Object.assign(defaultOptions, givenOptionsAccepted)
 
   invariant(typeof filePath === 'string' && filePath, 'filePath must be a string')
   invariant(Array.isArray(parameters), 'parameters must be an array')
@@ -60,7 +62,7 @@ function caseInsensitiveEnvMerge(envA: Object, envB: Object) {
   return mergedEnv
 }
 
-export async function getSpawnOptions(options: Exec$ValidOptions): Promise<Object> {
+export async function getSpawnOptions(options: Options): Promise<Object> {
   const spawnOptions = Object.assign({}, options, {
     env: caseInsensitiveEnvMerge(await getEnv(), options.env),
   })
@@ -78,7 +80,7 @@ export async function getSpawnOptions(options: Exec$ValidOptions): Promise<Objec
       }
     }
   }
-  spawnOptions.timeout = null
+  delete spawnOptions.timeout
   if (spawnOptions.env.OS) {
     spawnOptions.env.OS = undefined
   }
