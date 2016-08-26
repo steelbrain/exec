@@ -51,17 +51,17 @@ export function validate(filePath: string, parameters: Array<string>, givenOptio
   return options
 }
 
-function mergePath(a: string, b: string): string {
-  return arrayUnique(a.split(';').concat(b.split(';')).map(i => i.trim()).filter(i => i))
+export function mergePath(a: string, b: string): string {
+  return arrayUnique(a.split(';').concat(b.split(';')).map(i => i.trim()).filter(i => i)).join(';')
 }
 
-function mergeEnv(envA: Object, envB: Object) {
+export function mergeEnv(envA: Object, envB: Object): Object {
   if (process.platform !== 'win32') {
     return Object.assign(envA, envB)
   }
 
   // NOTE: Merge PATH and Path on windows
-  const mergedEnv = {}
+  const mergedEnv = { PATH: '' }
   for (const key in envA) {
     if (key.toUpperCase() !== 'PATH') {
       mergedEnv[key] = envA[key]
