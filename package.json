@@ -4,9 +4,7 @@
   "description": "Process spawning APIs beautified",
   "main": "lib/index.js",
   "scripts": {
-    "lint": "npm run flowcheck && npm run eslint",
-    "flowcheck": "flow check",
-    "eslint": "eslint .",
+    "lint": "(flow check) && (eslint .)",
     "test": "apm test",
     "clean": "rm -rf lib",
     "compile": "npm run clean && babel src --out-dir lib",
