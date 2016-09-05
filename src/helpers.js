@@ -1,5 +1,6 @@
 /* @flow */
 
+import Path from 'path'
 import invariant from 'assert'
 import arrayUnique from 'lodash.uniq'
 import { async as getEnv } from 'consistent-env'
@@ -111,4 +112,9 @@ export async function getSpawnOptions(options: Options): Promise<Object> {
 
 export function escape(item: any): string {
   return `"${String(item).replace(/"/g, '\\"')}"`
+}
+
+export function shouldNormalizeForWindows(filePath: string, options: Options): boolean {
+  const baseFilePath = Path.basename(filePath)
+  return process.platform === 'win32' && !options.shell && baseFilePath !== 'cmd.exe' && baseFilePath !== 'cmd'
 }
