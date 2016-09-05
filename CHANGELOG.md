@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.0.2
+
+- Fix a bug where spawning `cmd.exe` would result in inception
+
 ## 3.0.1
 
 - Correctly handle spaces in the program path
