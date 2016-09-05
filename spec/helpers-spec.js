@@ -50,4 +50,39 @@ describe('Helpers', function() {
       expect(Helpers.mergePath('; a ; b ; c ; d ;', 'g ; e')).toBe('a;b;c;d;g;e')
     })
   })
+  describe('shouldNormalizeForWindows', function() {
+    function shouldNormalizeForWindows(filePath: string, options: Object) {
+      return Helpers.shouldNormalizeForWindows(filePath, options)
+    }
+
+    it('returns false on any other os', function() {
+      const oldPlatform = process.platform
+      let platform = 'darwin'
+      // $FlowIgnore: Flow is dumb?
+      Object.defineProperty(process, 'platform', {
+        get() {
+          return platform
+        },
+      })
+      expect(shouldNormalizeForWindows('cmd', {})).toBe(false)
+      expect(shouldNormalizeForWindows('bash', {})).toBe(false)
+      platform = oldPlatform
+    })
+    it('returns true on windows', function() {
+      const oldPlatform = process.platform
+      let platform = 'win32'
+      // $FlowIgnore: Flow is dumb?
+      Object.defineProperty(process, 'platform', {
+        get() {
+          return platform
+        },
+      })
+      expect(shouldNormalizeForWindows('cmd', {})).toBe(false)
+      expect(shouldNormalizeForWindows('cmd.exe', {})).toBe(false)
+      expect(shouldNormalizeForWindows('bash.exe', {})).toBe(true)
+      expect(shouldNormalizeForWindows('ding', {})).toBe(true)
+      expect(shouldNormalizeForWindows('ding', { shell: true })).toBe(false)
+      platform = oldPlatform
+    })
+  })
 })

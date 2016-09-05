@@ -1,7 +1,7 @@
 /* @flow */
 
 import { spawn } from 'child_process'
-import { getSpawnOptions, validate, escape } from './helpers'
+import { getSpawnOptions, validate, escape, shouldNormalizeForWindows } from './helpers'
 import type { OptionsAccepted, Result } from './types'
 
 async function exec(
@@ -13,7 +13,8 @@ async function exec(
   const nodeSpawnOptions = await getSpawnOptions(options)
   let filePath = givenFilePath
   let parameters = givenParameters
-  if (process.platform === 'win32' && !options.shell) {
+
+  if (shouldNormalizeForWindows(filePath, options)) {
     nodeSpawnOptions.windowsVerbatimArguments = true
     let cmdArgs = [filePath]
     // filePath must be escaped if it has a \s in it, otherwise it must not
