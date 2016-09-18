@@ -54,15 +54,16 @@ async function exec(
 
       if (
         spawnedCmdOnWindows &&
-        stderr === `'${filePath}' is not recognized as an internal or external command,\noperable program or batch file.`
+        stderr === `'${givenFilePath}' is not recognized as an internal or external command,\r\noperable program or batch file.`
       ) {
-        const error: Object = new Error(`spawn ${filePath} ENOENT`)
+        const error: Object = new Error(`spawn ${givenFilePath} ENOENT`)
         error.code = 'ENOENT'
         error.errno = 'ENOENT'
-        error.syscall = `spawn ${filePath}`
-        error.path = filePath
-        error.spawnargs = parameters
-        throw error
+        error.syscall = `spawn ${givenFilePath}`
+        error.path = givenFilePath
+        error.spawnargs = givenParameters
+        reject(error)
+        return
       }
 
       if (options.stream === 'stdout') {
