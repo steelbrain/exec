@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.0.3
+
+- Handle `ENOENT` errors properly on Windows coming from `cmd.exe`
+
 ## 3.0.2
 
 - Fix a bug where spawning `cmd.exe` would result in inception
