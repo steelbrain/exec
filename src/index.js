@@ -1,7 +1,7 @@
 /* @flow */
 
 import { spawn } from 'child_process'
-import { getSpawnOptions, validate, escape, shouldNormalizeForWindows } from './helpers'
+import { getENOENTError, getSpawnOptions, validate, escape, shouldNormalizeForWindows } from './helpers'
 import type { OptionsAccepted, Result } from './types'
 
 async function exec(
@@ -52,17 +52,13 @@ async function exec(
       const stdout = data.stdout.join('').trim()
       const stderr = data.stderr.join('').trim()
 
+      // NOTE: On windows, we spawn everything through cmd.exe
+      // So we have to manually construct ENOENT from it's error message
       if (
         spawnedCmdOnWindows &&
         stderr === `'${givenFilePath}' is not recognized as an internal or external command,\r\noperable program or batch file.`
       ) {
-        const error: Object = new Error(`spawn ${givenFilePath} ENOENT`)
-        error.code = 'ENOENT'
-        error.errno = 'ENOENT'
-        error.syscall = `spawn ${givenFilePath}`
-        error.path = givenFilePath
-        error.spawnargs = givenParameters
-        reject(error)
+        reject(getENOENTError(givenFilePath, givenParameters))
         return
       }
 
