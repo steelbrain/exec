@@ -1,7 +1,7 @@
 /* @flow */
 
 import { spawn } from 'child_process'
-import { getSpawnOptions, validate, escape, shouldNormalizeForWindows } from './helpers'
+import { getENOENTError, getSpawnOptions, validate, escape, shouldNormalizeForWindows } from './helpers'
 import type { OptionsAccepted, Result } from './types'
 
 async function exec(
@@ -13,6 +13,7 @@ async function exec(
   const nodeSpawnOptions = await getSpawnOptions(options)
   let filePath = givenFilePath
   let parameters = givenParameters
+  let spawnedCmdOnWindows = false
 
   if (shouldNormalizeForWindows(filePath, options)) {
     nodeSpawnOptions.windowsVerbatimArguments = true
@@ -22,8 +23,9 @@ async function exec(
       cmdArgs = cmdArgs.map(escape)
     }
     cmdArgs = cmdArgs.concat(parameters.map(escape))
-    parameters = ['/s', '/c', `"${cmdArgs.join(' ')}"`]
     filePath = process.env.comspec || 'cmd.exe'
+    parameters = ['/s', '/c', `"${cmdArgs.join(' ')}"`]
+    spawnedCmdOnWindows = true
   }
 
   return await new Promise(function(resolve, reject) {
@@ -46,11 +48,24 @@ async function exec(
     })
     spawnedProcess.on('close', function(exitCode) {
       clearTimeout(timeout)
+
+      const stdout = data.stdout.join('').trim()
+      const stderr = data.stderr.join('').trim()
+
+      // NOTE: On windows, we spawn everything through cmd.exe
+      // So we have to manually construct ENOENT from it's error message
+      if (
+        spawnedCmdOnWindows &&
+        stderr === `'${givenFilePath}' is not recognized as an internal or external command,\r\noperable program or batch file.`
+      ) {
+        reject(getENOENTError(givenFilePath, givenParameters))
+        return
+      }
+
       if (options.stream === 'stdout') {
-        if (data.stderr.length && options.throwOnStdErr) {
-          reject(new Error(data.stderr.join('').trim()))
+        if (stderr && options.throwOnStdErr) {
+          reject(new Error(stderr))
         } else {
-          const stdout = data.stdout.join('').trim()
           if (exitCode !== 0 && !options.ignoreExitCode) {
             console.error('[exec] Process exited with no-zero code, stdout: ', stdout)
             reject(new Error(`Process exited with non-zero code: ${exitCode}`))
@@ -59,14 +74,13 @@ async function exec(
           }
         }
       } else if (options.stream === 'stderr') {
-        const stderr = data.stderr.join('').trim()
         if (stderr.length === 0 && !options.allowEmptyStderr) {
           reject(new Error(`Process exited with no output, code: ${exitCode}`))
         } else {
           resolve(stderr)
         }
       } else {
-        resolve({ stdout: data.stdout.join('').trim(), stderr: data.stderr.join('').trim(), exitCode })
+        resolve({ stdout, stderr, exitCode })
       }
     })
 

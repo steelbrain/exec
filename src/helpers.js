@@ -118,3 +118,13 @@ export function shouldNormalizeForWindows(filePath: string, options: Options): b
   const baseFilePath = Path.basename(filePath)
   return process.platform === 'win32' && !options.shell && baseFilePath !== 'cmd.exe' && baseFilePath !== 'cmd'
 }
+
+export function getENOENTError(filePath: string, parameters: Array<string>): Object {
+  const error: Object = new Error(`spawn ${filePath} ENOENT`)
+  error.code = 'ENOENT'
+  error.errno = 'ENOENT'
+  error.syscall = `spawn ${filePath}`
+  error.path = filePath
+  error.spawnargs = parameters
+  return error
+}
