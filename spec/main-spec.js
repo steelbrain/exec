@@ -175,5 +175,16 @@ if (process.platform === 'win32') {
       const result = await exec(Path.join(__dirname, './fixtures/yes spaces/hello'))
       expect(result).toBe('Hello World')
     })
+    it('throws ENOENT errors proeprly', async function() {
+      try {
+        await exec('something-non-existent', ['some', 'thing'])
+      } catch (error) {
+        expect(error.code).toBe('ENOENT')
+        expect(error.errno).toBe('ENOENT')
+        expect(error.syscall).toBe('spawn something-non-existent')
+        expect(error.path).toBe('something-non-existent')
+        expect(error.spawnargs).toEqual(['some', 'thing'])
+      }
+    })
   })
 }
