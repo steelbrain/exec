@@ -1,15 +1,15 @@
 /* @flow */
 
-import { spawn } from 'child_process'
+import { spawn, ChildProcess } from 'child_process'
 import { getENOENTError, getSpawnOptions, validate, escape, shouldNormalizeForWindows } from './helpers'
-import type { OptionsAccepted, Result } from './types'
+import type { OptionsAccepted, Options, Result } from './types'
 
 async function exec(
   givenFilePath: string,
-  givenParameters: Array<string> = [],
-  givenOptions: OptionsAccepted = {}
+  givenParameters: Array<string>,
+  options: Options,
+  callback: ((spawnedProcess: ChildProcess) => void)
 ): Promise<Result> {
-  const options = validate(givenFilePath, givenParameters, givenOptions)
   const nodeSpawnOptions = await getSpawnOptions(options)
   let filePath = givenFilePath
   let parameters = givenParameters
@@ -103,12 +103,37 @@ async function exec(
         reject(new Error('Process execution timed out'))
       }, options.timeout)
     }
+    callback(spawnedProcess)
   })
 }
 
-function execNode(filePath: string, parameters: Array<string> = [], options: OptionsAccepted = {}): Promise<Result> {
-  validate(filePath, parameters, options)
-  return exec(process.execPath, [filePath].concat(parameters), options)
+// NOTE: This proxy function is required to allow .kill() in different stages of process spawn
+// We cannot put this logic into exec() directly because it's an async function and doesn't
+// allow us to temper the underlying promise
+function execProxy(filePath: string, parameters: Array<string> = [], givenOptions: OptionsAccepted = {}): Promise<Result> {
+  const options = validate(filePath, parameters, givenOptions)
+  let killSignal = null
+  let spawnedProcess = null
+  const promise: Object = exec(filePath, parameters, options, function(spawnedChildProcess) {
+    if (killSignal) {
+      spawnedChildProcess.kill(killSignal)
+    } else {
+      spawnedProcess = spawnedChildProcess
+    }
+  })
+  promise.kill = function(givenKillSignal) {
+    if (spawnedProcess) {
+      spawnedProcess.kill(givenKillSignal)
+    } else {
+      killSignal = givenKillSignal || 'SIGTERM'
+    }
+  }
+  return promise
 }
 
-module.exports = { exec, execNode }
+function execNode(filePath: string, parameters: Array<string> = [], givenOptions: OptionsAccepted = {}): Promise<Result> {
+  validate(filePath, parameters, givenOptions)
+  return execProxy(process.execPath, [filePath].concat(parameters), givenOptions)
+}
+
+module.exports = { exec: execProxy, execNode }
