@@ -162,6 +162,19 @@ describe('execNode', function() {
     const output = await execNode(path, [2, 3, 2.2, false])
     expect(output).toBe('2 3 2.2 false')
   })
+
+  it('has a working kill method', async function() {
+    const path = Path.join(__dirname, 'fixtures', 'on-kill.js')
+    const promise = execNode(path, [], {})
+    // $FlowIgnore: Custom function
+    promise.kill()
+    try {
+      await promise
+      expect(false).toBe(true)
+    } catch (error) {
+      expect(error.message).toBe('Process exited with non-zero code: null')
+    }
+  })
 })
 
 if (process.platform === 'win32') {
