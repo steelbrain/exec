@@ -14,6 +14,7 @@ async function exec(
   let filePath = givenFilePath
   let parameters = givenParameters
   let spawnedCmdOnWindows = false
+  let spawnedProcess
 
   if (shouldNormalizeForWindows(filePath, options)) {
     nodeSpawnOptions.windowsVerbatimArguments = true
@@ -28,8 +29,8 @@ async function exec(
     spawnedCmdOnWindows = true
   }
 
-  return await new Promise(function(resolve, reject) {
-    const spawnedProcess = spawn(filePath, parameters, nodeSpawnOptions)
+  const promise: Object = await new Promise(function(resolve, reject) {
+    spawnedProcess = spawn(filePath, parameters, nodeSpawnOptions)
     const data = { stdout: [], stderr: [] }
     let timeout
 
@@ -104,6 +105,11 @@ async function exec(
       }, options.timeout)
     }
   })
+  promise.kill = function(signal) {
+    return spawnedProcess.kill(signal)
+  }
+
+  return promise
 }
 
 function execNode(filePath: string, parameters: Array<string> = [], options: OptionsAccepted = {}): Promise<Result> {

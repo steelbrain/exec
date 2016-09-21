@@ -24,8 +24,15 @@ type $OptionsAccepted = {
   allowEmptyStderr?: boolean = false,
   ignoreExitCode?: boolean
 } // Also supports all options of child_process::spawn
-export function exec(filePath: string, parameters: array, options: $OptionsAccepted)
-export function execNode(filePath: string, parameters: array, options: $OptionsAccepted)
+
+type PromisedProcess = {
+  then(callback: Function): Promise
+  catch(callback: Function): Promise
+  kill(signal: number)
+}
+
+export function exec(filePath: string, parameters: array, options: $OptionsAccepted): PromisedProcess
+export function execNode(filePath: string, parameters: array, options: $OptionsAccepted): PromisedProcess
 ```
 
 ## Explanation
