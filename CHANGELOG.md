@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.1.0
+
+- Provide a `.kill()` on spawned processes
+
 ## 3.0.3
 
 - Handle `ENOENT` errors properly on Windows coming from `cmd.exe`
