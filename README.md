@@ -37,6 +37,13 @@ export function execNode(filePath: string, parameters: array, options: $OptionsA
 
 ## Explanation
 
+### Promise callbacks
+
+* `then` callback is supposed to accept one of these results, depending on `options.stream`:
+  * `stdout` and `stderr` will result in a string, representing an stdout or stderr stream, respectively.
+  * `both` will result in an object of `{stdout, stderr, exitCode}` representing their respective streams and an exit code of a process.
+  * If `options.stream` is not provided it is assumed to be `stdout`, so a promise will result in a string representing an stdout stream. 
+
 ### `options.local`
 
 `options.local` adds node executables in `node_modules` relative to
