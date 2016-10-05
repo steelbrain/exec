@@ -1,8 +1,8 @@
 dependencies:
   override:
-    - curl -L https://git.io/vPmPy | sh # Install Atom
-    - curl -L https://git.io/vPm1q | sh # Debug Versions
-    - curl -L https://git.io/vPZfC | sh # NPM Install
+    - wget -qO- https://git.io/vPmPy | sh # Install Atom
+    - wget -qO- https://git.io/vPm1q | sh # Debug Versions
+    - wget -qO- https://git.io/vPZfC | sh # NPM Install
 
 test:
   override:
