@@ -9,7 +9,7 @@ export type OptionsAccepted = {
     directory: string,
     prepend?: boolean
   },
-  throwOnStdErr?: boolean,
+  throwOnStderr?: boolean,
   allowEmptyStderr?: boolean,
   ignoreExitCode?: boolean
 }
@@ -23,7 +23,7 @@ export type Options = {
     directory: string,
     prepend: boolean
   },
-  throwOnStdErr: boolean,
+  throwOnStderr: boolean,
   allowEmptyStderr: boolean,
   ignoreExitCode: boolean
 }

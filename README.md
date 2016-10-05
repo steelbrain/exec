@@ -20,7 +20,7 @@ type $OptionsAccepted = {
     directory: string,
     prepend?: boolean
   },
-  throwOnStdErr?: boolean = true,
+  throwOnStderr?: boolean = true,
   allowEmptyStderr?: boolean = false,
   ignoreExitCode?: boolean
 } // Also supports all options of child_process::spawn

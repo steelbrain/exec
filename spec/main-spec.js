@@ -41,8 +41,8 @@ describe('exec', function() {
     expect(result).toBe('STDOUThello dolly')
   })
 
-  it('ignores stderr if throwOnStdErr is specified', async function() {
-    const result = await exec(process.execPath, [PATH_NODE, 'error'], { throwOnStdErr: false })
+  it('ignores stderr if throwOnStderr is specified', async function() {
+    const result = await exec(process.execPath, [PATH_NODE, 'error'], { throwOnStderr: false })
     expect(result).toBe('STDOUT')
   })
 
