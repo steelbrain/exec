@@ -11,7 +11,7 @@
     "watch": "npm run clean && babel src --out-dir lib --watch"
   },
   "engines": {
-    "node": ">=6.0.0"
+    "node": ">=4"
   },
   "devDependencies": {
     "babel-cli": "^6.10.1",
