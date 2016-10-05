@@ -63,7 +63,7 @@ async function exec(
       }
 
       if (options.stream === 'stdout') {
-        if (stderr && options.throwOnStdErr) {
+        if (stderr && options.throwOnStderr) {
           reject(new Error(stderr))
         } else {
           if (exitCode !== 0 && !options.ignoreExitCode) {

@@ -32,9 +32,9 @@ export function validate(filePath: string, parameters: Array<string>, givenOptio
   if (options.stdin) {
     invariant(typeof options.stdin === 'string', 'options.stdin must be an object')
   } else options.stdin = null
-  if (typeof options.throwOnStdErr !== 'undefined') {
-    invariant(typeof options.throwOnStdErr === 'boolean', 'options.throwOnStdErr must be a boolean')
-  } else options.throwOnStdErr = true
+  if (typeof options.throwOnStderr !== 'undefined') {
+    invariant(typeof options.throwOnStderr === 'boolean', 'options.throwOnStderr must be a boolean')
+  } else options.throwOnStderr = true
   if (typeof options.local !== 'undefined') {
     invariant(typeof options.local === 'object', 'options.local must be an object')
     invariant(typeof options.local.directory === 'string', 'options.local.directory must be a string')

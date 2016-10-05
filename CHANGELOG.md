@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.0.0
+
+- Rename `throwOnStdErr` to `throwOnStderr`
+
 ## 3.1.0
 
 - Provide a `.kill()` on spawned processes
