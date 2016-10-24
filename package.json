@@ -14,7 +14,7 @@
     "node": ">=4"
   },
   "devDependencies": {
-    "babel-cli": "^6.10.1",
+    "babel-cli": "^6.18.0",
     "babel-preset-steelbrain": "^4.0.1",
     "eslint-config-steelbrain": "^1.0.4",
     "flow-bin": "^0.32.0",
