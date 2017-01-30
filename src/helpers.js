@@ -30,7 +30,7 @@ export function validate(filePath: string, parameters: Array<string>, givenOptio
     invariant(typeof options.env === 'object', 'options.env must be an object')
   } else options.env = {}
   if (options.stdin) {
-    invariant(typeof options.stdin === 'string' || Buffer.isBuffer(options.stdin), 'options.stdin must be an object')
+    invariant(typeof options.stdin === 'string' || Buffer.isBuffer(options.stdin), 'options.stdin must be a string or a Buffer')
   } else options.stdin = null
   if (typeof options.throwOnStderr !== 'undefined') {
     invariant(typeof options.throwOnStderr === 'boolean', 'options.throwOnStderr must be a boolean')
