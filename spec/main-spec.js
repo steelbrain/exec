@@ -42,7 +42,7 @@ describe('exec', function() {
   })
 
   it('passes on stdin Buffers properly', async function() {
-    const result = await exec(process.execPath, [PATH_NODE, 'input'], { stdin: new Buffer('Wakey Wakey') })
+    const result = await exec(process.execPath, [PATH_NODE, 'input'], { stdin: Buffer.from('Wakey Wakey') })
     expect(result).toBe('STDOUTWakey Wakey')
   })
 
