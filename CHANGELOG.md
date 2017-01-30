@@ -3,6 +3,7 @@
 ## 4.0.0
 
 - Rename `throwOnStdErr` to `throwOnStderr`
+- Support `Buffer`s in `options.stdin`
 
 ## 3.1.0
 

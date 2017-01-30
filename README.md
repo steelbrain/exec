@@ -15,7 +15,7 @@ type $OptionsAccepted = {
   timeout?: number | Infinity,
   stream?: 'stdout' | 'stderr'  | 'both',
   env: Object,
-  stdin?: ?string,
+  stdin?: string | Buffer,
   local?: {
     directory: string,
     prepend?: boolean
@@ -42,7 +42,7 @@ export function execNode(filePath: string, parameters: array, options: $OptionsA
 * `then` callback is supposed to accept one of these results, depending on `options.stream`:
   * `stdout` and `stderr` will result in a string, representing an stdout or stderr stream, respectively.
   * `both` will result in an object of `{stdout, stderr, exitCode}` representing their respective streams and an exit code of a process.
-  * If `options.stream` is not provided it is assumed to be `stdout`, so a promise will result in a string representing an stdout stream. 
+  * If `options.stream` is not provided it is assumed to be `stdout`, so a promise will result in a string representing an stdout stream.
 
 ### `options.local`
 
