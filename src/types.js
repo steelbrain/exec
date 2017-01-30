@@ -4,7 +4,7 @@ export type OptionsAccepted = {
   stream?: 'stdout' | 'stderr' | 'both',
   timeout?: number,
   env?: Object,
-  stdin?: ?string,
+  stdin?: string | Buffer,
   local?: {
     directory: string,
     prepend?: boolean

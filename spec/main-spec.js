@@ -41,6 +41,11 @@ describe('exec', function() {
     expect(result).toBe('STDOUThello dolly')
   })
 
+  it('passes on stdin Buffers properly', async function() {
+    const result = await exec(process.execPath, [PATH_NODE, 'input'], { stdin: Buffer.from('Wakey Wakey') })
+    expect(result).toBe('STDOUTWakey Wakey')
+  })
+
   it('ignores stderr if throwOnStderr is specified', async function() {
     const result = await exec(process.execPath, [PATH_NODE, 'error'], { throwOnStderr: false })
     expect(result).toBe('STDOUT')
