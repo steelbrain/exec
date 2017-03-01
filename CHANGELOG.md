@@ -1,5 +1,9 @@
 # Changelog
 
+## 5.0.0
+
+- Change default timeout from `Infinity` to 10 seconds
+
 ## 4.0.0
 
 - Rename `throwOnStdErr` to `throwOnStderr`
