@@ -1,5 +1,7 @@
 # Exec
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/steelbrain/exec.svg)](https://greenkeeper.io/)
+
 Node's Process spawning APIs beautified
 
 ## Installation

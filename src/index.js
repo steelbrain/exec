@@ -65,13 +65,11 @@ async function exec(
       if (options.stream === 'stdout') {
         if (stderr && options.throwOnStderr) {
           reject(new Error(stderr))
+        } else if (exitCode !== 0 && !options.ignoreExitCode) {
+          console.error('[exec] Process exited with no-zero code, stdout: ', stdout)
+          reject(new Error(`Process exited with non-zero code: ${exitCode}`))
         } else {
-          if (exitCode !== 0 && !options.ignoreExitCode) {
-            console.error('[exec] Process exited with no-zero code, stdout: ', stdout)
-            reject(new Error(`Process exited with non-zero code: ${exitCode}`))
-          } else {
-            resolve(stdout)
-          }
+          resolve(stdout)
         }
       } else if (options.stream === 'stderr') {
         if (stderr.length === 0 && !options.allowEmptyStderr) {
