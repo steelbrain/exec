@@ -8,7 +8,7 @@ async function exec(
   givenFilePath: string,
   givenParameters: Array<string>,
   options: Options,
-  callback: ((spawnedProcess: ChildProcess) => void)
+  callback: ((spawnedProcess: ChildProcess) => void),
 ): Promise<Result> {
   const nodeSpawnOptions = await getSpawnOptions(options)
   let filePath = givenFilePath
@@ -28,7 +28,7 @@ async function exec(
     spawnedCmdOnWindows = true
   }
 
-  return await new Promise(function(resolve, reject) {
+  return new Promise(function(resolve, reject) {
     const spawnedProcess = spawn(filePath, parameters, nodeSpawnOptions)
     const data = { stdout: [], stderr: [] }
     let timeout
