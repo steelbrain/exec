@@ -25,7 +25,7 @@ export function validate(filePath: string, parameters: Array<string>, givenOptio
   } else options.stream = 'stdout'
   if (options.timeout) {
     invariant(typeof options.timeout === 'number', 'options.timeout must be a number')
-  } else options.timeout = Infinity
+  } else options.timeout = 10000
   if (options.env) {
     invariant(typeof options.env === 'object', 'options.env must be an object')
   } else options.env = {}
