@@ -142,7 +142,7 @@ function killProcess(spawnedProcess: Object, signal: string = 'SIGTERM'): void {
     .then(function(output: any) {
       const pids = output.split(/\s+/).filter(i => /^\d+$/.test(i)).map(parseInt).filter(i => i !== spawnedProcess.pid && i > 0)
       pids.forEach(function(pid) {
-        process.kill(pid)
+        process.kill(pid, signal)
       })
     }).catch(function(error) {
       console.error('[sb-exec] Error killing process on windows', error)
