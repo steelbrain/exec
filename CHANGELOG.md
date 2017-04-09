@@ -1,5 +1,9 @@
 # Changelog
 
+## Upcoming
+
+- Kill all subprocesses properly on windows
+
 ## 4.0.0
 
 - Rename `throwOnStdErr` to `throwOnStderr`
