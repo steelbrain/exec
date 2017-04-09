@@ -131,22 +131,30 @@ function execProxy(filePath: string, parameters: Array<string> = [], givenOption
   return promise
 }
 
-function killProcess(spawnedProcess: Object, signal: string = 'SIGTERM'): void {
+async function killProcess(spawnedProcess: Object, signal: string = 'SIGTERM'): Promise<void> {
   const spawnfile = Path.basename(spawnedProcess.spawnfile)
-  if (process.platform !== 'win32' && spawnfile !== 'wmic.exe' && spawnfile !== 'wmic') {
+  if (process.platform !== 'win32' || spawnfile === 'wmic.exe' || spawnfile === 'wmic') {
     // Also do this if the process is wmic
     spawnedProcess.kill(signal)
     return
   }
-  execProxy('wmic', ['process', 'where', `(ParentProcessId=${spawnedProcess.pid})`, 'get', 'processid'], { stream: 'stdout', timeout: 60 * 1000 })
-    .then(function(output: any) {
-      const pids = output.split(/\s+/).filter(i => /^\d+$/.test(i)).map(parseInt).filter(i => i !== spawnedProcess.pid && i > 0)
-      pids.forEach(function(pid) {
+  try {
+    const output: any = await execProxy('wmic', [
+      'process',
+      'where',
+      `(ParentProcessId=${spawnedProcess.pid})`,
+      'get',
+      'processid',
+    ], { stream: 'stdout', timeout: 60 * 1000 })
+    output
+      .split(/\s+/)
+      .filter(i => /^\d+$/.test(i))
+      .map(parseInt)
+      .filter(i => i !== spawnedProcess.pid && i > 0)
+      .forEach(function(pid) {
         process.kill(pid, signal)
       })
-    }).catch(function(error) {
-      console.error('[sb-exec] Error killing process on windows', error)
-    })
+  } catch (error) { /* No Op */ }
 }
 
 function execNode(filePath: string, parameters: Array<string> = [], givenOptions: OptionsAccepted = {}): Promise<Result> {
