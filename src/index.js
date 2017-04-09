@@ -149,7 +149,7 @@ async function killProcess(spawnedProcess: Object, signal: string = 'SIGTERM'): 
     output
       .split(/\s+/)
       .filter(i => /^\d+$/.test(i))
-      .map(parseInt)
+      .map(i => parseInt(i, 10))
       .filter(i => i !== spawnedProcess.pid && i > 0)
       .forEach(function(pid) {
         process.kill(pid, signal)
