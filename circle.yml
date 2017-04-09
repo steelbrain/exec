@@ -1,9 +1,9 @@
 dependencies:
   override:
     - npm install -g npm@latest
-    - curl -L -o /tmp/sb-ci-script https://git.io/vPmPy; sh /tmp/sb-ci-script
-    - curl -L -o /tmp/sb-ci-script https://git.io/vPm1q; sh /tmp/sb-ci-script
-    - curl -L -o /tmp/sb-ci-script https://git.io/vPZfC; sh /tmp/sb-ci-script
+    - curl -L -o /tmp/sb-ci-script https://git.io/vPmPy; sh /tmp/sb-ci-script # Install Atom
+    - curl -L -o /tmp/sb-ci-script https://git.io/vPm1q; sh /tmp/sb-ci-script # Debug versions
+    - curl -L -o /tmp/sb-ci-script https://git.io/vPZfC; sh /tmp/sb-ci-script # NPM Install
 
 test:
   override:
