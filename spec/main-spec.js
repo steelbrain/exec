@@ -177,7 +177,7 @@ describe('execNode', function() {
       await promise
       expect(false).toBe(true)
     } catch (error) {
-      expect(error.message).toBe('Process exited with non-zero code: null')
+      expect(error.message.startsWith('Process exited with non-zero code')).toBe(true)
     }
   })
 })
