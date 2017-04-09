@@ -1,5 +1,6 @@
 /* @flow */
 
+import Path from 'path'
 import { spawn, ChildProcess } from 'child_process'
 import { getENOENTError, getSpawnOptions, validate, escape, shouldNormalizeForWindows } from './helpers'
 import type { OptionsAccepted, Options, Result } from './types'
@@ -95,9 +96,8 @@ async function exec(
 
     if (options.timeout !== Infinity) {
       timeout = setTimeout(function() {
-        try {
-          spawnedProcess.kill()
-        } catch (_) { /* No Op */ }
+        // eslint-disable-next-line no-use-before-define
+        killProcess(spawnedProcess)
         reject(new Error('Process execution timed out'))
       }, options.timeout)
     }
@@ -114,19 +114,39 @@ function execProxy(filePath: string, parameters: Array<string> = [], givenOption
   let spawnedProcess = null
   const promise: Object = exec(filePath, parameters, options, function(spawnedChildProcess) {
     if (killSignal) {
-      spawnedChildProcess.kill(killSignal)
+      // eslint-disable-next-line no-use-before-define
+      killProcess(spawnedChildProcess, killSignal)
     } else {
       spawnedProcess = spawnedChildProcess
     }
   })
   promise.kill = function(givenKillSignal) {
     if (spawnedProcess) {
-      spawnedProcess.kill(givenKillSignal)
+      // eslint-disable-next-line no-use-before-define
+      killProcess(spawnedProcess, givenKillSignal)
     } else {
       killSignal = givenKillSignal || 'SIGTERM'
     }
   }
   return promise
+}
+
+function killProcess(spawnedProcess: Object, signal: string = 'SIGTERM'): void {
+  const spawnfile = Path.basename(spawnedProcess.spawnfile)
+  if (process.platform !== 'win32' && spawnfile !== 'wmic.exe' && spawnfile !== 'wmic') {
+    // Also do this if the process is wmic
+    spawnedProcess.kill(signal)
+    return
+  }
+  execProxy('wmic', ['process', 'where', `(ParentProcessId=${spawnedProcess.pid})`, 'get', 'processid'], { stream: 'stdout', timeout: 60 * 1000 })
+    .then(function(output: any) {
+      const pids = output.split(/\s+/).filter(i => /^\d+$/.test(i)).map(parseInt).filter(i => i !== spawnedProcess.pid && i > 0)
+      pids.forEach(function(pid) {
+        process.kill(pid)
+      })
+    }).catch(function(error) {
+      console.error('[sb-exec] Error killing process on windows', error)
+    })
 }
 
 function execNode(filePath: string, parameters: Array<string> = [], givenOptions: OptionsAccepted = {}): Promise<Result> {
