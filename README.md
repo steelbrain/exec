@@ -14,7 +14,7 @@ npm install --save sb-exec
 
 ```js
 type $OptionsAccepted = {
-  timeout?: number | Infinity,
+  timeout?: number | Infinity, // In milliseconds
   stream?: 'stdout' | 'stderr'  | 'both',
   env: Object,
   stdin?: string | Buffer,
