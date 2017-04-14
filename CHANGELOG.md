@@ -1,13 +1,10 @@
 # Changelog
 
-## Upcoming
-
-- Kill all subprocesses properly on windows
-
 ## 4.0.0
 
 - Rename `throwOnStdErr` to `throwOnStderr`
 - Support `Buffer`s in `options.stdin`
+- Kill all subprocesses properly on windows
 
 ## 3.1.0
 
