@@ -63,18 +63,19 @@ async function exec(
         return
       }
 
+      const processName = Path.basename(filePath)
       if (options.stream === 'stdout') {
         if (stderr && options.throwOnStderr) {
           reject(new Error(stderr))
         } else if (exitCode !== 0 && !options.ignoreExitCode) {
-          console.error('[exec] Process exited with no-zero code, stdout: ', stdout)
-          reject(new Error(`Process exited with non-zero code: ${exitCode}`))
+          console.error(`[exec] Process '${processName}' exited with no-zero code, stdout: `, stdout)
+          reject(new Error(`Process '${processName}' exited with non-zero code: ${exitCode}`))
         } else {
           resolve(stdout)
         }
       } else if (options.stream === 'stderr') {
         if (stderr.length === 0 && !options.allowEmptyStderr) {
-          reject(new Error(`Process exited with no output, code: ${exitCode}`))
+          reject(new Error(`Process '${processName}' exited with no output, code: ${exitCode}`))
         } else {
           resolve(stderr)
         }
