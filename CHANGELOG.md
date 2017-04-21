@@ -1,5 +1,9 @@
 # Changelog
 
+## Upcoming
+
+- Include process name in error
+
 ## 4.0.0
 
 - Rename `throwOnStdErr` to `throwOnStderr`
