@@ -177,7 +177,11 @@ describe('execNode', function() {
       await promise
       expect(false).toBe(true)
     } catch (error) {
-      expect(error.message.startsWith('Process exited with non-zero code')).toBe(true)
+      if (atom.appVersion.includes('beta')) {
+        expect(error.message.startsWith("Process 'Atom Beta Helper' exited with non-zero code")).toBe(true)
+      } else {
+        expect(error.message.startsWith("Process 'Atom Helper' exited with non-zero code")).toBe(true)
+      }
     }
   })
 })
