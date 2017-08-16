@@ -6,7 +6,7 @@
   "scripts": {
     "lint": "(flow check) && (eslint .)",
     "test": "apm test",
-    "clean": "rm -rf lib",
+    "clean": "rimraf lib",
     "compile": "npm run clean && babel src --out-dir lib",
     "watch": "npm run clean && babel src --out-dir lib --watch"
   },
@@ -17,8 +17,9 @@
     "babel-cli": "^6.10.1",
     "babel-preset-steelbrain": "^5.0.0",
     "eslint-config-steelbrain": "^3.0.0",
-    "flow-bin": "^0.46.0",
-    "jasmine-fix": "^1.0.1"
+    "flow-bin": "^0.53.0",
+    "jasmine-fix": "^1.0.1",
+    "rimraf": "^2.6.1"
   },
   "repository": {
     "type": "git",
