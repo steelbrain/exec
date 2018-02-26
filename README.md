@@ -31,6 +31,7 @@ type PromisedProcess = {
   then(callback: Function): Promise
   catch(callback: Function): Promise
   kill(signal: number)
+  childProcess: ChildProcess
 }
 
 export function exec(filePath: string, parameters?: array, options?: $OptionsAccepted): PromisedProcess

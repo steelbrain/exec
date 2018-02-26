@@ -1,16 +1,11 @@
 /* @flow */
 
 import Path from 'path'
-import { spawn, ChildProcess } from 'child_process'
+import { spawn } from 'child_process'
 import { getENOENTError, getSpawnOptions, validate, escape, shouldNormalizeForWindows } from './helpers'
 import type { OptionsAccepted, Options, Result } from './types'
 
-async function exec(
-  givenFilePath: string,
-  givenParameters: Array<string>,
-  options: Options,
-  callback: (spawnedProcess: ChildProcess) => void,
-): Promise<Result> {
+async function exec(givenFilePath: string, givenParameters: Array<string>, options: Options): Promise<Result> {
   const nodeSpawnOptions = await getSpawnOptions(options)
   let filePath = givenFilePath
   let parameters = givenParameters
@@ -29,8 +24,8 @@ async function exec(
     spawnedCmdOnWindows = true
   }
 
-  return new Promise(function(resolve, reject) {
-    const spawnedProcess = spawn(filePath, parameters, nodeSpawnOptions)
+  const spawnedProcess = spawn(filePath, parameters, nodeSpawnOptions)
+  const promise = new Promise(function(resolve, reject) {
     const data = { stdout: [], stderr: [] }
     let timeout
 
@@ -106,34 +101,25 @@ async function exec(
         reject(new Error('Process execution timed out'))
       }, options.timeout)
     }
-    callback(spawnedProcess)
   })
+  // $FlowIgnore: Custom props
+  promise.spawnedProcess = spawnedProcess
+  // $FlowIgnore: Custom props
+  promise.kill = signal => killProcess(spawnedProcess, signal) // eslint-disable-line no-use-before-define
+
+  return promise
 }
 
 // NOTE: This proxy function is required to allow .kill() in different stages of process spawn
 // We cannot put this logic into exec() directly because it's an async function and doesn't
 // allow us to temper the underlying promise
-function execProxy(filePath: string, parameters: Array<string> = [], givenOptions: OptionsAccepted = {}): Promise<Result> {
+async function execProxy(
+  filePath: string,
+  parameters: Array<string> = [],
+  givenOptions: OptionsAccepted = {},
+): Promise<Result> {
   const options = validate(filePath, parameters, givenOptions)
-  let killSignal = null
-  let spawnedProcess = null
-  const promise: Object = exec(filePath, parameters, options, function(spawnedChildProcess) {
-    if (killSignal) {
-      // eslint-disable-next-line no-use-before-define
-      killProcess(spawnedChildProcess, killSignal)
-    } else {
-      spawnedProcess = spawnedChildProcess
-    }
-  })
-  promise.kill = function(givenKillSignal) {
-    if (spawnedProcess) {
-      // eslint-disable-next-line no-use-before-define
-      killProcess(spawnedProcess, givenKillSignal)
-    } else {
-      killSignal = givenKillSignal || 'SIGTERM'
-    }
-  }
-  return promise
+  return exec(filePath, parameters, options)
 }
 
 async function killProcess(spawnedProcess: Object, signal: string = 'SIGTERM'): Promise<void> {
