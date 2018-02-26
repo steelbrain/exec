@@ -3,9 +3,9 @@
 import Path from 'path'
 import { spawn } from 'child_process'
 import { getENOENTError, getSpawnOptions, validate, escape, shouldNormalizeForWindows } from './helpers'
-import type { OptionsAccepted, Options, Result } from './types'
+import type { OptionsAccepted, Options } from './types'
 
-async function exec(givenFilePath: string, givenParameters: Array<string>, options: Options): Promise<Result> {
+async function exec(givenFilePath: string, givenParameters: Array<string>, options: Options): any {
   const nodeSpawnOptions = await getSpawnOptions(options)
   let filePath = givenFilePath
   let parameters = givenParameters
@@ -62,7 +62,7 @@ async function exec(givenFilePath: string, givenParameters: Array<string>, optio
       if (options.stream === 'stdout') {
         if (stderr && options.throwOnStderr) {
           reject(new Error(stderr))
-        } else if (exitCode > 0 && !options.ignoreExitCode) {
+        } else if (exitCode !== 0 && !options.ignoreExitCode) {
           console.error('[exec] Process exited with no-zero code, stdout: ', stdout)
           reject(new Error(`Process exited with non-zero code: ${exitCode}`))
         } else {
@@ -102,22 +102,20 @@ async function exec(givenFilePath: string, givenParameters: Array<string>, optio
       }, options.timeout)
     }
   })
-  // $FlowIgnore: Custom props
-  promise.spawnedProcess = spawnedProcess
-  // $FlowIgnore: Custom props
-  promise.kill = signal => killProcess(spawnedProcess, signal) // eslint-disable-line no-use-before-define
 
-  return promise
+  return {
+    then: (...args) => promise.then(...args),
+    catch: (...args) => promise.catch(...args),
+    spawnedProcess,
+    // eslint-disable-next-line no-use-before-define
+    kill: signal => killProcess(spawnedProcess, signal),
+  }
 }
 
 // NOTE: This proxy function is required to allow .kill() in different stages of process spawn
 // We cannot put this logic into exec() directly because it's an async function and doesn't
 // allow us to temper the underlying promise
-async function execProxy(
-  filePath: string,
-  parameters: Array<string> = [],
-  givenOptions: OptionsAccepted = {},
-): Promise<Result> {
+async function execProxy(filePath: string, parameters: Array<string> = [], givenOptions: OptionsAccepted = {}): any {
   const options = validate(filePath, parameters, givenOptions)
   return exec(filePath, parameters, options)
 }
@@ -148,7 +146,7 @@ async function killProcess(spawnedProcess: Object, signal: string = 'SIGTERM'): 
   }
 }
 
-function execNode(filePath: string, parameters: Array<string> = [], givenOptions: OptionsAccepted = {}): Promise<Result> {
+function execNode(filePath: string, parameters: Array<string> = [], givenOptions: OptionsAccepted = {}): any {
   validate(filePath, parameters, givenOptions)
   return execProxy(process.execPath, [filePath].concat(parameters), givenOptions)
 }

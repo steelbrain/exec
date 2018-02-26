@@ -2,7 +2,6 @@
 
 import Path from 'path'
 import invariant from 'assert'
-import findProcess from 'find-process'
 import { it, wait } from 'jasmine-fix'
 import { exec, execNode } from '../src'
 
@@ -180,45 +179,14 @@ describe('execNode', function() {
   })
 
   it('has a working kill method on nix', async function() {
-    if (process.platform === 'win32') return
-
-    let pid = 0
     const path = Path.join(__dirname, 'fixtures', 'on-kill.js')
-    const promise = execNode(path, [], {}, function(spawnedProcess) {
-      // eslint-disable-next-line prefer-destructuring
-      pid = spawnedProcess.pid
-      console.log('pid', pid)
-    })
-    expect(process.kill(pid, 0)).toBe(true)
+    const promise = execNode(path, [], {})
+    expect(promise.spawnedProcess.killed).toBe(false)
     await wait(1000)
     // $FlowIgnore: Custom function
     promise.kill()
     await wait(1000)
-    try {
-      process.kill(pid, 0)
-      expect(false).toBe(true)
-    } catch (error) {
-      expect(error.code).toBe('ESRCH')
-    }
-  })
-
-  it('has a working kill method on win32', async function() {
-    if (process.platform !== 'win32') return
-
-    let pid = 0
-    const path = Path.join(__dirname, 'fixtures', 'on-kill.js')
-    const promise = execNode(path, [], {}, function(spawnedProcess) {
-      // eslint-disable-next-line prefer-destructuring
-      pid = spawnedProcess.pid
-      console.log('pid', pid)
-    })
-    expect((await findProcess(pid)).length).toBe(1)
-    expect(process.kill(pid, 0)).toBe(true)
-    await wait(1000)
-    // $FlowIgnore: Custom function
-    promise.kill()
-    await wait(1000)
-    expect((await findProcess(pid)).length).toBe(0)
+    expect(promise.spawnedProcess.killed).toBe(true)
   })
 })
 
