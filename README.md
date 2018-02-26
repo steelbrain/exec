@@ -33,8 +33,8 @@ type PromisedProcess = {
   kill(signal: number)
 }
 
-export function exec(filePath: string, parameters?: array, options?: $OptionsAccepted, callback?: ((childProcess: ?ChildProcess) => void)): PromisedProcess
-export function execNode(filePath: string, parameters?: array, options?: $OptionsAccepted, callback?: ((childProcess: ?ChildProcess) => void)): PromisedProcess
+export function exec(filePath: string, parameters?: array, options?: $OptionsAccepted): PromisedProcess
+export function execNode(filePath: string, parameters?: array, options?: $OptionsAccepted): PromisedProcess
 ```
 
 ## Explanation
