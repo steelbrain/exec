@@ -6,11 +6,11 @@ import type { ChildProcess } from 'child_process'
 import { getENOENTError, getSpawnOptions, validate, escape, shouldNormalizeForWindows } from './helpers'
 import type { OptionsAccepted, Options, Result } from './types'
 
-type PromisedProcess = {|
+type PromisedProcess = {
   spawnedProcess: ChildProcess,
   kill(signal?: string): void,
   output: Result | Promise<Result>,
-|}
+}
 
 async function handleProcessStdin(spawnedProcess: ChildProcess, options: Options) {
   if (spawnedProcess.stdin) {
