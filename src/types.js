@@ -2,6 +2,7 @@
 
 export type OptionsAccepted = {
   stream?: 'stdout' | 'stderr' | 'both',
+  streaming?: boolean,
   timeout?: number,
   env?: Object,
   stdin?: string | Buffer,
@@ -16,6 +17,7 @@ export type OptionsAccepted = {
 
 export type Options = {
   stream: 'stdout' | 'stderr' | 'both',
+  streaming: boolean,
   timeout: number,
   env: Object,
   stdin: ?string,

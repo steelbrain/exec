@@ -9,7 +9,7 @@ import type { OptionsAccepted, Options, Result } from './types'
 type PromisedProcess = {|
   spawnedProcess: ChildProcess,
   kill(signal?: string): void,
-  output: Promise<Result>,
+  output: Result | Promise<Result>,
 |}
 
 async function handleProcessStdin(spawnedProcess: ChildProcess, options: Options) {
@@ -126,6 +126,10 @@ async function exec(givenFilePath: string, givenParameters: Array<string>, given
 
   const spawnedProcess = spawn(filePath, parameters, nodeSpawnOptions)
   handleProcessStdin(spawnedProcess, options)
+  const dataPromise = Promise.all([
+    handleProcessResult(spawnedProcess, options, givenFilePath, givenParameters, spawnedCmdOnWindows),
+    handleProcessTimeout(spawnedProcess, options),
+  ]).then(results => results[0])
 
   return {
     spawnedProcess,
@@ -133,10 +137,7 @@ async function exec(givenFilePath: string, givenParameters: Array<string>, given
       // eslint-disable-next-line no-use-before-define
       killProcess(spawnedProcess, signal)
     },
-    output: Promise.all([
-      handleProcessResult(spawnedProcess, options, givenFilePath, givenParameters, spawnedCmdOnWindows),
-      handleProcessTimeout(spawnedProcess, options),
-    ]).then(results => results[0]),
+    output: options.streaming ? dataPromise : await dataPromise,
   }
 }
 

@@ -32,6 +32,9 @@ export function validate(filePath: string, parameters: Array<string>, givenOptio
       'options.stdin must be a string or a Buffer',
     )
   } else options.stdin = null
+  if (typeof options.streaming !== 'undefined') {
+    invariant(typeof options.streaming === 'boolean', 'options.streaming must be a boolean')
+  } else options.streaming = false
   if (typeof options.throwOnStderr !== 'undefined') {
     invariant(typeof options.throwOnStderr === 'boolean', 'options.throwOnStderr must be a boolean')
   } else options.throwOnStderr = true
