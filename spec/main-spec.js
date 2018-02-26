@@ -15,6 +15,14 @@ describe('exec', function() {
     expect(result.output).toBe('STDOUT')
   })
 
+  it('supports streaming', async function() {
+    const result = await exec(process.execPath, [PATH_NODE], {
+      streaming: true,
+    })
+    expect(result.output instanceof Promise).toBe(true)
+    expect(await result.output).toBe('STDOUT')
+  })
+
   it('throws if we are expecting on stderr and get output on stdout', async function() {
     try {
       await exec(process.execPath, [PATH_NODE, 'error'])
