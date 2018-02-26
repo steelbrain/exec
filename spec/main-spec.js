@@ -194,6 +194,12 @@ describe('execNode', function() {
     expect((result.spawnedProcess: any).killed).toBe(false)
     result.kill()
     expect((result.spawnedProcess: any).killed).toBe(true)
+    try {
+      await result.output
+      expect(false).toBe(true)
+    } catch (error) {
+      expect(error.message).toBe('Process was killed')
+    }
   })
 })
 
