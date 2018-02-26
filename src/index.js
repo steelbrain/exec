@@ -6,6 +6,12 @@ import type { ChildProcess } from 'child_process'
 import { getENOENTError, getSpawnOptions, validate, escape, shouldNormalizeForWindows } from './helpers'
 import type { OptionsAccepted, Options, Result } from './types'
 
+type PromisedProcess = {|
+  spawnedProcess: ChildProcess,
+  kill(signal?: string): void,
+  output: Promise<Result>,
+|}
+
 async function handleProcessStdin(spawnedProcess: ChildProcess, options: Options) {
   if (spawnedProcess.stdin) {
     if (options.stdin) {
@@ -97,14 +103,7 @@ function handleProcessResult(
   })
 }
 
-async function exec(
-  givenFilePath: string,
-  givenParameters: Array<string>,
-  givenOptions: Object,
-): Promise<{
-  spawnedProcess: ChildProcess,
-  output: Promise<Result>,
-}> {
+async function exec(givenFilePath: string, givenParameters: Array<string>, givenOptions: Object): Promise<PromisedProcess> {
   const options = validate(givenFilePath, givenParameters, givenOptions)
 
   const nodeSpawnOptions = await getSpawnOptions(options)
@@ -130,8 +129,10 @@ async function exec(
 
   return {
     spawnedProcess,
-    // eslint-disable-next-line no-use-before-define
-    kill: signal => killProcess(spawnedProcess, signal),
+    kill: signal => {
+      // eslint-disable-next-line no-use-before-define
+      killProcess(spawnedProcess, signal)
+    },
     output: Promise.all([
       handleProcessResult(spawnedProcess, options, givenFilePath, givenParameters, spawnedCmdOnWindows),
       handleProcessTimeout(spawnedProcess, options),
@@ -146,10 +147,7 @@ function execProxy(
   filePath: string,
   parameters: Array<string> = [],
   options: OptionsAccepted = {},
-): Promise<{
-  spawnedProcess: ChildProcess,
-  output: Promise<Result>,
-}> {
+): Promise<PromisedProcess> {
   return exec(filePath, parameters, options)
 }
 
@@ -183,10 +181,7 @@ function execNode(
   filePath: string,
   parameters: Array<string> = [],
   givenOptions: OptionsAccepted = {},
-): Promise<{
-  spawnedProcess: ChildProcess,
-  output: Promise<Result>,
-}> {
+): Promise<PromisedProcess> {
   validate(filePath, parameters, givenOptions)
   return execProxy(process.execPath, [filePath].concat(parameters), givenOptions)
 }

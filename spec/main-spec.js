@@ -187,11 +187,10 @@ describe('execNode', function() {
 
   it('has a working kill method', async function() {
     const path = Path.join(__dirname, 'fixtures', 'on-kill.js')
-    const promise = await execNode(path, [], {})
-    expect(promise.spawnedProcess.killed).toBe(false)
-    // $FlowIgnore: Custom function
-    promise.kill()
-    expect(promise.spawnedProcess.killed).toBe(true)
+    const result = await execNode(path, [], {})
+    expect((result.spawnedProcess: any).killed).toBe(false)
+    result.kill()
+    expect((result.spawnedProcess: any).killed).toBe(true)
   })
 })
 
