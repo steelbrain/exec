@@ -1,5 +1,9 @@
 # Changelog
 
+## 5.0.0
+
+- Output method was changed. Instead of directly returning the results, the process execution is now divided into two steps, spawning and waiting till data ends. So first you need to await on `exec(param, parameters, options)`, which returns an object with the spawned process, and an `output` promise which you can await on again to get the real output.
+
 ## 4.0.0
 
 - Rename `throwOnStdErr` to `throwOnStderr`
