@@ -2,33 +2,49 @@
 
 import Path from 'path'
 import { spawn } from 'child_process'
+import type { ChildProcess } from 'child_process'
 import { getENOENTError, getSpawnOptions, validate, escape, shouldNormalizeForWindows } from './helpers'
-import type { OptionsAccepted, Options } from './types'
+import type { OptionsAccepted, Options, Result } from './types'
 
-async function exec(givenFilePath: string, givenParameters: Array<string>, options: Options): any {
-  const nodeSpawnOptions = await getSpawnOptions(options)
-  let filePath = givenFilePath
-  let parameters = givenParameters
-  let spawnedCmdOnWindows = false
-
-  if (shouldNormalizeForWindows(filePath, options)) {
-    nodeSpawnOptions.windowsVerbatimArguments = true
-    let cmdArgs = [filePath]
-    // filePath must be escaped if it has a \s in it, otherwise it must not
-    if (/\s/.test(filePath)) {
-      cmdArgs = cmdArgs.map(escape)
+async function handleProcessStdin(spawnedProcess: ChildProcess, options: Options) {
+  if (spawnedProcess.stdin) {
+    if (options.stdin) {
+      try {
+        spawnedProcess.stdin.write(options.stdin)
+      } catch (_) {
+        /* No Op */
+      }
     }
-    cmdArgs = cmdArgs.concat(parameters.map(escape))
-    filePath = process.env.comspec || 'cmd.exe'
-    parameters = ['/s', '/c', `"${cmdArgs.join(' ')}"`]
-    spawnedCmdOnWindows = true
+    try {
+      spawnedProcess.stdin.end()
+    } catch (_) {
+      /* No Op */
+    }
   }
-
-  const spawnedProcess = spawn(filePath, parameters, nodeSpawnOptions)
-  const promise = new Promise(function(resolve, reject) {
+}
+function handleProcessTimeout(spawnedProcess: ChildProcess, options: Options): Promise<void> {
+  if (options.timeout === Infinity) return Promise.resolve()
+  return new Promise(function(resolve, reject) {
+    const timeout = setTimeout(function() {
+      // eslint-disable-next-line no-use-before-define
+      killProcess(spawnedProcess)
+      reject(new Error('Process execution timed out'))
+    }, options.timeout)
+    spawnedProcess.on('close', function() {
+      clearTimeout(timeout)
+      resolve()
+    })
+  })
+}
+function handleProcessResult(
+  spawnedProcess: ChildProcess,
+  options: Options,
+  filePath: string,
+  parameters: Array<string>,
+  spawnedCmdOnWindows: boolean,
+): Promise<Result> {
+  return new Promise(function(resolve, reject) {
     const data = { stdout: [], stderr: [] }
-    let timeout
-
     if (spawnedProcess.stdout) {
       spawnedProcess.stdout.on('data', function(chunk) {
         data.stdout.push(chunk)
@@ -39,12 +55,8 @@ async function exec(givenFilePath: string, givenParameters: Array<string>, optio
         data.stderr.push(chunk)
       })
     }
-    spawnedProcess.on('error', function(error) {
-      reject(error)
-    })
+    spawnedProcess.on('error', reject)
     spawnedProcess.on('close', function(exitCode) {
-      clearTimeout(timeout)
-
       const stdout = data.stdout.join('').trim()
       const stderr = data.stderr.join('').trim()
 
@@ -52,10 +64,9 @@ async function exec(givenFilePath: string, givenParameters: Array<string>, optio
       // So we have to manually construct ENOENT from it's error message
       if (
         spawnedCmdOnWindows &&
-        stderr ===
-          `'${givenFilePath}' is not recognized as an internal or external command,\r\noperable program or batch file.`
+        stderr === `'${filePath}' is not recognized as an internal or external command,\r\noperable program or batch file.`
       ) {
-        reject(getENOENTError(givenFilePath, givenParameters))
+        reject(getENOENTError(filePath, parameters))
         return
       }
 
@@ -78,45 +89,55 @@ async function exec(givenFilePath: string, givenParameters: Array<string>, optio
         resolve({ stdout, stderr, exitCode })
       }
     })
-
-    if (spawnedProcess.stdin) {
-      if (options.stdin) {
-        try {
-          spawnedProcess.stdin.write(options.stdin)
-        } catch (_) {
-          /* No Op */
-        }
-      }
-      try {
-        spawnedProcess.stdin.end()
-      } catch (_) {
-        /* No Op */
-      }
-    }
-
-    if (options.timeout !== Infinity) {
-      timeout = setTimeout(function() {
-        // eslint-disable-next-line no-use-before-define
-        killProcess(spawnedProcess)
-        reject(new Error('Process execution timed out'))
-      }, options.timeout)
-    }
   })
+}
+
+async function exec(
+  givenFilePath: string,
+  givenParameters: Array<string>,
+  givenOptions: Object,
+): Promise<{
+  spawnedProcess: ChildProcess,
+  output: Promise<Result>,
+}> {
+  const options = validate(givenFilePath, givenParameters, givenOptions)
+
+  const nodeSpawnOptions = await getSpawnOptions(options)
+  let filePath = givenFilePath
+  let parameters = givenParameters
+  let spawnedCmdOnWindows = false
+
+  if (shouldNormalizeForWindows(filePath, options)) {
+    nodeSpawnOptions.windowsVerbatimArguments = true
+    let cmdArgs = [filePath]
+    // filePath must be escaped if it has a \s in it, otherwise it must not
+    if (/\s/.test(filePath)) {
+      cmdArgs = cmdArgs.map(escape)
+    }
+    cmdArgs = cmdArgs.concat(parameters.map(escape))
+    filePath = process.env.comspec || 'cmd.exe'
+    parameters = ['/s', '/c', `"${cmdArgs.join(' ')}"`]
+    spawnedCmdOnWindows = true
+  }
+
+  const spawnedProcess = spawn(filePath, parameters, nodeSpawnOptions)
+  handleProcessStdin(spawnedProcess, options)
 
   return {
-    then: (...args) => promise.then(...args),
-    catch: (...args) => promise.catch(...args),
     spawnedProcess,
     // eslint-disable-next-line no-use-before-define
     kill: signal => killProcess(spawnedProcess, signal),
+    output: Promise.all([
+      handleProcessResult(spawnedProcess, options, givenFilePath, givenParameters, spawnedCmdOnWindows),
+      handleProcessTimeout(spawnedProcess, options),
+    ]).then(results => results[0]),
   }
 }
 
 // NOTE: This proxy function is required to allow .kill() in different stages of process spawn
 // We cannot put this logic into exec() directly because it's an async function and doesn't
 // allow us to temper the underlying promise
-async function execProxy(filePath: string, parameters: Array<string> = [], givenOptions: OptionsAccepted = {}): any {
-  const options = validate(filePath, parameters, givenOptions)
+function execProxy(filePath: string, parameters: Array<string> = [], options: OptionsAccepted = {}): any {
   return exec(filePath, parameters, options)
 }
 
@@ -128,11 +149,11 @@ async function killProcess(spawnedProcess: Object, signal: string = 'SIGTERM'): 
     return
   }
   try {
-    const output: any = await execProxy(
+    const output: any = await await execProxy(
       'wmic',
       ['process', 'where', `(ParentProcessId=${spawnedProcess.pid})`, 'get', 'processid'],
       { stream: 'stdout', timeout: 60 * 1000 },
-    )
+    ).output
     output
       .split(/\s+/)
       .filter(i => /^\d+$/.test(i))
