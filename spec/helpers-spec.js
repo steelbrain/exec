@@ -1,8 +1,18 @@
 /* @flow */
 
+import path from 'path'
 import * as Helpers from '../src/helpers'
 
 describe('Helpers', function() {
+  let realDel
+  beforeEach(function() {
+    realDel = path.delimiter
+    path.delimiter = ';'
+  })
+  afterEach(function() {
+    path.delimiter = realDel
+  })
+
   describe('mergeEnv', function() {
     it('returns env as is if not windows', function() {
       const oldPlatform = process.platform
