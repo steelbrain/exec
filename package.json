@@ -4,32 +4,27 @@
   "description": "Process spawning APIs beautified",
   "main": "lib/index.js",
   "scripts": {
-    "lint": "(flow check) && (eslint .)",
+    "lint": "(flow check) && (eslint .) && (prettier -l '**/*.js')",
     "test": "apm test",
-    "clean": "rimraf lib",
-    "compile": "npm run clean && babel src --out-dir lib",
-    "watch": "npm run clean && babel src --out-dir lib --watch"
+    "compile": "sb-babel-cli -o lib src",
+    "watch": "npm run compile -- --watch"
   },
   "engines": {
     "node": ">=4"
   },
   "devDependencies": {
-    "babel-cli": "^6.10.1",
+    "babel-core": "^6.26.0",
     "babel-preset-steelbrain": "^5.0.0",
     "eslint-config-steelbrain": "^5.0.2",
     "flow-bin": "^0.66.0",
     "jasmine-fix": "^1.0.1",
-    "rimraf": "^2.6.1"
+    "sb-babel-cli": "^0.1.1"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/steelbrain/exec.git"
   },
-  "keywords": [
-    "child_process",
-    "process",
-    "exec"
-  ],
+  "keywords": ["child_process", "process", "exec"],
   "author": "steelbrain",
   "license": "MIT",
   "bugs": {

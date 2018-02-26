@@ -1,4 +1,2 @@
 console.log('boo')
-setInterval(function() {
-
-}, 100000)
+setInterval(function() {}, 100000)
