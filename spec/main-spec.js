@@ -2,7 +2,7 @@
 
 import Path from 'path'
 import invariant from 'assert'
-import { it } from 'jasmine-fix'
+import { it, fit, wait } from 'jasmine-fix'
 import { exec, execNode } from '../src'
 
 const PATH_NODE = Path.join(__dirname, 'fixtures', 'node.js')
@@ -178,17 +178,25 @@ describe('execNode', function() {
     expect(output).toBe('2 3 2.2 false')
   })
 
-  it('has a working kill method', async function() {
+  fit('has a working kill method', async function() {
     let pid = 0
     const path = Path.join(__dirname, 'fixtures', 'on-kill.js')
     const promise = execNode(path, [], {}, function(spawnedProcess) {
       // eslint-disable-next-line prefer-destructuring
       pid = spawnedProcess.pid
+      console.log('pid', pid)
     })
     expect(process.kill(pid, 0)).toBe(true)
+    await wait(1000)
     // $FlowIgnore: Custom function
     promise.kill()
-    expect(process.kill(pid, 0)).toBe(false)
+    await wait(1000)
+    try {
+      process.kill(pid, 0)
+      expect(false).toBe(true)
+    } catch (error) {
+      expect(error.code).toBe('ESRCH')
+    }
   })
 })
 
