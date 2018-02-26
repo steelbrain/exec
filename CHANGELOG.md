@@ -2,7 +2,8 @@
 
 ## 5.0.0
 
-- Output method was changed. Instead of directly returning the results, the process execution is now divided into two steps, spawning and waiting till data ends. So first you need to await on `exec(param, parameters, options)`, which returns an object with the spawned process, and an `output` promise which you can await on again to get the real output.
+- Add `options.streaming`, if set to true `exec*` return early with the process so you can again await on `retVal.output` to get the usual output while having access to childProcess and kill the entire time.
+- The usual output has been moved into `retVal.output`, if you don't set streaming to `true`, it should be just like it used to be, nothing changed
 - Instead of throwing a normal exit-code error, it now says `Process was killed` when it is
 
 ## 4.0.0
