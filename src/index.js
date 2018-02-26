@@ -142,7 +142,14 @@ async function exec(
 // NOTE: This proxy function is required to allow .kill() in different stages of process spawn
 // We cannot put this logic into exec() directly because it's an async function and doesn't
 // allow us to temper the underlying promise
-function execProxy(filePath: string, parameters: Array<string> = [], options: OptionsAccepted = {}): any {
+function execProxy(
+  filePath: string,
+  parameters: Array<string> = [],
+  options: OptionsAccepted = {},
+): Promise<{
+  spawnedProcess: ChildProcess,
+  output: Promise<Result>,
+}> {
   return exec(filePath, parameters, options)
 }
 
@@ -154,11 +161,11 @@ async function killProcess(spawnedProcess: Object, signal: string = 'SIGTERM'): 
     return
   }
   try {
-    const output: any = await await execProxy(
+    const output: any = await (await execProxy(
       'wmic',
       ['process', 'where', `(ParentProcessId=${spawnedProcess.pid})`, 'get', 'processid'],
       { stream: 'stdout', timeout: 60 * 1000 },
-    ).output
+    )).output
     output
       .split(/\s+/)
       .filter(i => /^\d+$/.test(i))
@@ -172,7 +179,14 @@ async function killProcess(spawnedProcess: Object, signal: string = 'SIGTERM'): 
   }
 }
 
-function execNode(filePath: string, parameters: Array<string> = [], givenOptions: OptionsAccepted = {}): any {
+function execNode(
+  filePath: string,
+  parameters: Array<string> = [],
+  givenOptions: OptionsAccepted = {},
+): Promise<{
+  spawnedProcess: ChildProcess,
+  output: Promise<Result>,
+}> {
   validate(filePath, parameters, givenOptions)
   return execProxy(process.execPath, [filePath].concat(parameters), givenOptions)
 }
