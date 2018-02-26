@@ -113,7 +113,12 @@ async function exec(
 // NOTE: This proxy function is required to allow .kill() in different stages of process spawn
 // We cannot put this logic into exec() directly because it's an async function and doesn't
 // allow us to temper the underlying promise
-function execProxy(filePath: string, parameters: Array<string> = [], givenOptions: OptionsAccepted = {}): Promise<Result> {
+function execProxy(
+  filePath: string,
+  parameters: Array<string> = [],
+  givenOptions: OptionsAccepted = {},
+  callback: ?(childProcess: ChildProcess) => void = null,
+): Promise<Result> {
   const options = validate(filePath, parameters, givenOptions)
   let killSignal = null
   let spawnedProcess = null
@@ -123,6 +128,13 @@ function execProxy(filePath: string, parameters: Array<string> = [], givenOption
       killProcess(spawnedChildProcess, killSignal)
     } else {
       spawnedProcess = spawnedChildProcess
+      if (callback) {
+        try {
+          callback(spawnedChildProcess)
+        } catch (error) {
+          console.error(error)
+        }
+      }
     }
   })
   promise.kill = function(givenKillSignal) {
@@ -162,9 +174,14 @@ async function killProcess(spawnedProcess: Object, signal: string = 'SIGTERM'): 
   }
 }
 
-function execNode(filePath: string, parameters: Array<string> = [], givenOptions: OptionsAccepted = {}): Promise<Result> {
+function execNode(
+  filePath: string,
+  parameters: Array<string> = [],
+  givenOptions: OptionsAccepted = {},
+  callback: ?(childProcess: ChildProcess) => void = null,
+): Promise<Result> {
   validate(filePath, parameters, givenOptions)
-  return execProxy(process.execPath, [filePath].concat(parameters), givenOptions)
+  return execProxy(process.execPath, [filePath].concat(parameters), givenOptions, callback)
 }
 
 module.exports = { exec: execProxy, execNode }

@@ -179,16 +179,16 @@ describe('execNode', function() {
   })
 
   it('has a working kill method', async function() {
+    let pid = 0
     const path = Path.join(__dirname, 'fixtures', 'on-kill.js')
-    const promise = execNode(path, [], {})
+    const promise = execNode(path, [], {}, function(spawnedProcess) {
+      // eslint-disable-next-line prefer-destructuring
+      pid = spawnedProcess.pid
+    })
+    expect(process.kill(pid, 0)).toBe(true)
     // $FlowIgnore: Custom function
     promise.kill()
-    try {
-      await promise
-      expect(false).toBe(true)
-    } catch (error) {
-      expect(error.message.startsWith('Process exited with non-zero code')).toBe(true)
-    }
+    expect(process.kill(pid, 0)).toBe(false)
   })
 })
 
