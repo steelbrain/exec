@@ -7,11 +7,11 @@ export type OptionsAccepted = {
   stdin?: string | Buffer,
   local?: {
     directory: string,
-    prepend?: boolean
+    prepend?: boolean,
   },
   throwOnStderr?: boolean,
   allowEmptyStderr?: boolean,
-  ignoreExitCode?: boolean
+  ignoreExitCode?: boolean,
 }
 
 export type Options = {
@@ -21,11 +21,11 @@ export type Options = {
   stdin: ?string,
   local?: {
     directory: string,
-    prepend: boolean
+    prepend: boolean,
   },
   throwOnStderr: boolean,
   allowEmptyStderr: boolean,
-  ignoreExitCode: boolean
+  ignoreExitCode: boolean,
 }
 
 export type Result = string | { stdout: string, stderr: string, exitCode: number }

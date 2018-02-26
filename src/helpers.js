@@ -19,9 +19,8 @@ export function validate(filePath: string, parameters: Array<string>, givenOptio
 
   invariant(typeof options === 'object' && options, 'options must be an object')
   if (options.stream) {
-    const stream = options.stream
-    invariant(stream === 'both' || stream === 'stdout' || stream === 'stderr',
-      'options.stream should be stdout|stderr|both')
+    const { stream } = options
+    invariant(stream === 'both' || stream === 'stdout' || stream === 'stderr', 'options.stream should be stdout|stderr|both')
   } else options.stream = 'stdout'
   if (options.timeout) {
     invariant(typeof options.timeout === 'number', 'options.timeout must be a number')
@@ -30,7 +29,10 @@ export function validate(filePath: string, parameters: Array<string>, givenOptio
     invariant(typeof options.env === 'object', 'options.env must be an object')
   } else options.env = {}
   if (options.stdin) {
-    invariant(typeof options.stdin === 'string' || Buffer.isBuffer(options.stdin), 'options.stdin must be a string or a Buffer')
+    invariant(
+      typeof options.stdin === 'string' || Buffer.isBuffer(options.stdin),
+      'options.stdin must be a string or a Buffer',
+    )
   } else options.stdin = null
   if (typeof options.throwOnStderr !== 'undefined') {
     invariant(typeof options.throwOnStderr === 'boolean', 'options.throwOnStderr must be a boolean')
@@ -53,24 +55,30 @@ export function validate(filePath: string, parameters: Array<string>, givenOptio
 }
 
 export function mergePath(a: string, b: string): string {
-  return arrayUnique(a.split(';').concat(b.split(';')).map(i => i.trim()).filter(i => i)).join(';')
+  return arrayUnique(
+    a
+      .split(Path.delimiter)
+      .concat(b.split(Path.delimiter))
+      .map(i => i.trim())
+      .filter(Boolean),
+  ).join(Path.delimiter)
 }
 
 export function mergeEnv(envA: Object, envB: Object): Object {
   if (process.platform !== 'win32') {
-    return Object.assign(envA, envB)
+    return Object.assign({}, envA, envB)
   }
 
   // NOTE: Merge PATH and Path on windows
   const mergedEnv = { PATH: '' }
-  for (const key in envA) {
+  for (const key of Object.keys(envA)) {
     if (key.toUpperCase() !== 'PATH') {
       mergedEnv[key] = envA[key]
       continue
     }
     mergedEnv.PATH = mergePath(mergedEnv.PATH, envA[key])
   }
-  for (const key in envB) {
+  for (const key of Object.keys(envB)) {
     if (key.toUpperCase() !== 'PATH') {
       mergedEnv[key] = envB[key]
       continue
@@ -85,13 +93,13 @@ export async function getSpawnOptions(options: Options): Promise<Object> {
     env: mergeEnv(await getEnv(), options.env),
   })
   let npmPath
-  const local = options.local
+  const { local } = options
   if (local) {
     npmPath = await getPathAsync(local.directory)
   }
   if (local && npmPath) {
-    for (const key in spawnOptions.env) {
-      if ({}.hasOwnProperty.call(spawnOptions.env, key) && key === 'PATH') {
+    for (const key of Object.keys(spawnOptions.env)) {
+      if (key === 'PATH') {
         const value = spawnOptions.env[key]
         spawnOptions.env[key] = local.prepend ? npmPath + PATH_SEPARATOR + value : value + PATH_SEPARATOR + npmPath
         break

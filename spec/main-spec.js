@@ -71,46 +71,56 @@ describe('exec', function() {
   })
 
   it('passes env properly', async function() {
-    const result = await exec(process.execPath, [PATH_ENV], { env: {
-      SOMETHING: 'Hello',
-      SOMETHING_ELSE: 'Dolly',
-    } })
+    const result = await exec(process.execPath, [PATH_ENV], {
+      env: {
+        SOMETHING: 'Hello',
+        SOMETHING_ELSE: 'Dolly',
+      },
+    })
     expect(result).toBe('Hello\nDolly')
   })
 
   it('works well with stdio: inherit', async function() {
-    const result = await exec(process.execPath, [PATH_ENV], { env: {
-      SOMETHING: 'Hello',
-      SOMETHING_ELSE: 'Dolly',
-    },
-      stdio: 'inherit' })
+    const result = await exec(process.execPath, [PATH_ENV], {
+      env: {
+        SOMETHING: 'Hello',
+        SOMETHING_ELSE: 'Dolly',
+      },
+      stdio: 'inherit',
+    })
     expect(result).toBe('')
   })
 
   describe('supports executing modules', function() {
     it('from local paths', async function() {
-      const result = await exec('sb-exec-test', [], { local: {
-        directory: Path.join(__dirname, 'fixtures', 'path'),
-      } })
+      const result = await exec('sb-exec-test', [], {
+        local: {
+          directory: Path.join(__dirname, 'fixtures', 'path'),
+        },
+      })
       expect(result).toBe('HEY')
     })
 
     it('supports prepend', async function() {
       const PATH = Path.join(__dirname, 'fixtures', 'path', 'node_modules', '.bin')
-      const result = await exec('sb-exec-test', [], { local: {
-        directory: Path.join(__dirname, 'fixtures', 'deep'),
-        prepend: true,
-      },
-        env: { PATH } })
+      const result = await exec('sb-exec-test', [], {
+        local: {
+          directory: Path.join(__dirname, 'fixtures', 'deep'),
+          prepend: true,
+        },
+        env: { PATH },
+      })
       expect(result).toBe('HEY2')
     })
 
     it('supports append', async function() {
       const PATH = Path.join(__dirname, 'fixtures', 'path', 'node_modules', '.bin')
-      const result = await exec('sb-exec-test', [], { local: {
-        directory: Path.join(__dirname, 'fixtures', 'deep'),
-      },
-        env: { PATH } })
+      const result = await exec('sb-exec-test', [], {
+        local: {
+          directory: Path.join(__dirname, 'fixtures', 'deep'),
+        },
+        env: { PATH },
+      })
       expect(result).toBe('HEY')
     })
   })

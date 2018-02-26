@@ -9,7 +9,7 @@ async function exec(
   givenFilePath: string,
   givenParameters: Array<string>,
   options: Options,
-  callback: ((spawnedProcess: ChildProcess) => void),
+  callback: (spawnedProcess: ChildProcess) => void,
 ): Promise<Result> {
   const nodeSpawnOptions = await getSpawnOptions(options)
   let filePath = givenFilePath
@@ -57,7 +57,8 @@ async function exec(
       // So we have to manually construct ENOENT from it's error message
       if (
         spawnedCmdOnWindows &&
-        stderr === `'${givenFilePath}' is not recognized as an internal or external command,\r\noperable program or batch file.`
+        stderr ===
+          `'${givenFilePath}' is not recognized as an internal or external command,\r\noperable program or batch file.`
       ) {
         reject(getENOENTError(givenFilePath, givenParameters))
         return
@@ -87,11 +88,15 @@ async function exec(
       if (options.stdin) {
         try {
           spawnedProcess.stdin.write(options.stdin)
-        } catch (_) { /* No Op */ }
+        } catch (_) {
+          /* No Op */
+        }
       }
       try {
         spawnedProcess.stdin.end()
-      } catch (_) { /* No Op */ }
+      } catch (_) {
+        /* No Op */
+      }
     }
 
     if (options.timeout !== Infinity) {
@@ -139,13 +144,11 @@ async function killProcess(spawnedProcess: Object, signal: string = 'SIGTERM'): 
     return
   }
   try {
-    const output: any = await execProxy('wmic', [
-      'process',
-      'where',
-      `(ParentProcessId=${spawnedProcess.pid})`,
-      'get',
-      'processid',
-    ], { stream: 'stdout', timeout: 60 * 1000 })
+    const output: any = await execProxy(
+      'wmic',
+      ['process', 'where', `(ParentProcessId=${spawnedProcess.pid})`, 'get', 'processid'],
+      { stream: 'stdout', timeout: 60 * 1000 },
+    )
     output
       .split(/\s+/)
       .filter(i => /^\d+$/.test(i))
@@ -154,7 +157,9 @@ async function killProcess(spawnedProcess: Object, signal: string = 'SIGTERM'): 
       .forEach(function(pid) {
         process.kill(pid, signal)
       })
-  } catch (error) { /* No Op */ }
+  } catch (error) {
+    /* No Op */
+  }
 }
 
 function execNode(filePath: string, parameters: Array<string> = [], givenOptions: OptionsAccepted = {}): Promise<Result> {
