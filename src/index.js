@@ -70,6 +70,11 @@ function handleProcessResult(
         return
       }
 
+      if (exitCode === null) {
+        reject(new Error('Process was killed'))
+        return
+      }
+
       if (options.stream === 'stdout') {
         if (stderr && options.throwOnStderr) {
           reject(new Error(stderr))
