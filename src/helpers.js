@@ -7,8 +7,6 @@ import { async as getEnv } from 'consistent-env'
 import { getPathAsync } from 'sb-npm-path'
 import type { OptionsAccepted, Options } from './types'
 
-const PATH_SEPARATOR = process.platform === 'win32' ? ';' : ':'
-
 export function validate(filePath: string, parameters: Array<string>, givenOptionsAccepted: OptionsAccepted): Options {
   // NOTE: We need to specify type of this to object to supress some warnings that rise from the merge (Flow, duh)
   const defaultOptions: Object = {}
@@ -101,7 +99,7 @@ export async function getSpawnOptions(options: Options): Promise<Object> {
     for (const key of Object.keys(spawnOptions.env)) {
       if (key === 'PATH') {
         const value = spawnOptions.env[key]
-        spawnOptions.env[key] = local.prepend ? npmPath + PATH_SEPARATOR + value : value + PATH_SEPARATOR + npmPath
+        spawnOptions.env[key] = local.prepend ? npmPath + Path.delimiter + value : value + Path.delimiter + npmPath
         break
       }
     }
