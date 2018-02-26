@@ -2,7 +2,7 @@
 
 import Path from 'path'
 import invariant from 'assert'
-import { it, fit, wait } from 'jasmine-fix'
+import { it, wait } from 'jasmine-fix'
 import { exec, execNode } from '../src'
 
 const PATH_NODE = Path.join(__dirname, 'fixtures', 'node.js')
@@ -178,7 +178,7 @@ describe('execNode', function() {
     expect(output).toBe('2 3 2.2 false')
   })
 
-  fit('has a working kill method', async function() {
+  it('has a working kill method', async function() {
     let pid = 0
     const path = Path.join(__dirname, 'fixtures', 'on-kill.js')
     const promise = execNode(path, [], {}, function(spawnedProcess) {
