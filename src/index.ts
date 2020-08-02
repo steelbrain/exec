@@ -1,7 +1,9 @@
 import { ExecOptions, ChildProcess, spawn } from 'child_process'
 
-interface ExtendedExecOptions extends ExecOptions {
-  handleChildProcess(childProcess: ChildProcess): void
+interface ExtendedExecOptions<OutputType> extends ExecOptions {
+  handleChildProcess?: (childProcess: ChildProcess) => void
+  handleStdout?: (chunk: OutputType) => void
+  handleStderr?: (chunk: OutputType) => void
 }
 
 interface ProcessPromise<T = any> extends Promise<T> {
@@ -12,10 +14,10 @@ async function execInternal(
   command: string,
   args: string[],
   options: (
-    | ({ encoding: 'buffer' | null } & Omit<ExtendedExecOptions, 'stdio'>)
-    | ({ encoding: 'buffer' | null } & ExtendedExecOptions)
-    | ({ encoding?: BufferEncoding } & Omit<ExtendedExecOptions, 'stdio'>)
-    | ({ encoding?: BufferEncoding } & ExtendedExecOptions)) &
+    | ({ encoding: 'buffer' | null } & Omit<ExtendedExecOptions<Buffer>, 'stdio'>)
+    | ({ encoding: 'buffer' | null } & ExtendedExecOptions<Buffer>)
+    | ({ encoding?: BufferEncoding } & Omit<ExtendedExecOptions<string>, 'stdio'>)
+    | ({ encoding?: BufferEncoding } & ExtendedExecOptions<string>)) &
     ({
       handleChildProcess(childProcess: ChildProcess): void
     }),
@@ -39,11 +41,17 @@ async function execInternal(
     if (spawnedProcess.stdout) {
       spawnedProcess.stdout.on('data', function(chunk) {
         output.stdout!.push(chunk)
+        if (options.handleStdout) {
+          options.handleStdout(chunk)
+        }
       })
     }
     if (spawnedProcess.stderr) {
       spawnedProcess.stderr.on('data', function(chunk) {
         output.stderr!.push(chunk)
+        if (options.handleStderr) {
+          options.handleStderr(chunk)
+        }
       })
     }
 
@@ -80,7 +88,7 @@ async function execInternal(
 export function exec(
   command: string,
   args: string[],
-  options?: { encoding: 'buffer' | null } & Omit<ExtendedExecOptions, 'stdio'>,
+  options?: { encoding: 'buffer' | null } & Omit<ExtendedExecOptions<Buffer>, 'stdio'>,
 ): ProcessPromise<{
   stdout: Buffer
   stderr: Buffer
@@ -89,7 +97,7 @@ export function exec(
 export function exec(
   command: string,
   args: string[],
-  options?: { encoding: 'buffer' | null } & ExtendedExecOptions,
+  options?: { encoding: 'buffer' | null } & ExtendedExecOptions<Buffer>,
 ): ProcessPromise<{
   stdout: Buffer | null
   stderr: Buffer | null
@@ -98,7 +106,7 @@ export function exec(
 export function exec(
   command: string,
   args: string[],
-  options?: { encoding?: BufferEncoding } & Omit<ExtendedExecOptions, 'stdio'>,
+  options?: { encoding?: BufferEncoding } & Omit<ExtendedExecOptions<string>, 'stdio'>,
 ): ProcessPromise<{
   stdout: string
   stderr: string
@@ -107,7 +115,7 @@ export function exec(
 export function exec(
   command: string,
   args: string[],
-  options?: { encoding?: BufferEncoding } & ExtendedExecOptions,
+  options?: { encoding?: BufferEncoding } & ExtendedExecOptions<string>,
 ): ProcessPromise<{
   stdout: string | null
   stderr: string | null
@@ -118,10 +126,10 @@ export function exec(
   command: string,
   args: string[],
   options?:
-    | ({ encoding: 'buffer' | null } & Omit<ExtendedExecOptions, 'stdio'>)
-    | ({ encoding: 'buffer' | null } & ExtendedExecOptions)
-    | ({ encoding?: BufferEncoding } & Omit<ExtendedExecOptions, 'stdio'>)
-    | ({ encoding?: BufferEncoding } & ExtendedExecOptions),
+    | ({ encoding: 'buffer' | null } & Omit<ExtendedExecOptions<Buffer>, 'stdio'>)
+    | ({ encoding: 'buffer' | null } & ExtendedExecOptions<Buffer>)
+    | ({ encoding?: BufferEncoding } & Omit<ExtendedExecOptions<string>, 'stdio'>)
+    | ({ encoding?: BufferEncoding } & ExtendedExecOptions<string>),
 ): ProcessPromise<{
   stdout: string | Buffer | null
   stderr: string | Buffer | null
@@ -151,7 +159,7 @@ export function exec(
 export function execFile(
   filePath: string,
   args: string[],
-  options?: { encoding: 'buffer' | null } & Omit<ExtendedExecOptions, 'stdio'>,
+  options?: { encoding: 'buffer' | null } & Omit<ExtendedExecOptions<Buffer>, 'stdio'>,
 ): ProcessPromise<{
   stdout: Buffer
   stderr: Buffer
@@ -160,7 +168,7 @@ export function execFile(
 export function execFile(
   filePath: string,
   args: string[],
-  options?: { encoding: 'buffer' | null } & ExtendedExecOptions,
+  options?: { encoding: 'buffer' | null } & ExtendedExecOptions<Buffer>,
 ): ProcessPromise<{
   stdout: Buffer | null
   stderr: Buffer | null
@@ -169,7 +177,7 @@ export function execFile(
 export function execFile(
   filePath: string,
   args: string[],
-  options?: { encoding?: BufferEncoding } & Omit<ExtendedExecOptions, 'stdio'>,
+  options?: { encoding?: BufferEncoding } & Omit<ExtendedExecOptions<string>, 'stdio'>,
 ): ProcessPromise<{
   stdout: string
   stderr: string
@@ -178,7 +186,7 @@ export function execFile(
 export function execFile(
   filePath: string,
   args: string[],
-  options?: { encoding?: BufferEncoding } & ExtendedExecOptions,
+  options?: { encoding?: BufferEncoding } & ExtendedExecOptions<string>,
 ): ProcessPromise<{
   stdout: string | null
   stderr: string | null
@@ -189,10 +197,10 @@ export function execFile(
   filePath: string,
   args: string[],
   options?:
-    | ({ encoding: 'buffer' | null } & Omit<ExtendedExecOptions, 'stdio'>)
-    | ({ encoding: 'buffer' | null } & ExtendedExecOptions)
-    | ({ encoding?: BufferEncoding } & Omit<ExtendedExecOptions, 'stdio'>)
-    | ({ encoding?: BufferEncoding } & ExtendedExecOptions),
+    | ({ encoding: 'buffer' | null } & Omit<ExtendedExecOptions<Buffer>, 'stdio'>)
+    | ({ encoding: 'buffer' | null } & ExtendedExecOptions<Buffer>)
+    | ({ encoding?: BufferEncoding } & Omit<ExtendedExecOptions<string>, 'stdio'>)
+    | ({ encoding?: BufferEncoding } & ExtendedExecOptions<string>),
 ): ProcessPromise<{
   stdout: string | Buffer | null
   stderr: string | Buffer | null
