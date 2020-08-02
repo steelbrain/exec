@@ -12,8 +12,8 @@ async function execInternal(
   command: string,
   args: string[],
   options: (
-    | ({ encoding: 'buffer' | null } & Omit<ExtendedExecOptions, 'stdio'>)
-    | ({ encoding: 'buffer' | null } & ExtendedExecOptions)
+    | ({ encoding?: 'buffer' | null } & Omit<ExtendedExecOptions, 'stdio'>)
+    | ({ encoding?: 'buffer' | null } & ExtendedExecOptions)
     | ({ encoding: BufferEncoding } & Omit<ExtendedExecOptions, 'stdio'>)
     | ({ encoding: BufferEncoding } & ExtendedExecOptions)) &
     ({
@@ -22,13 +22,13 @@ async function execInternal(
 ): Promise<{
   stdout: string | Buffer | null
   stderr: string | Buffer | null
-  exitCode: number | null
+  exitCode: number
 }> {
   const spawnedProcess = spawn(command, args, options)
   const promise = new Promise<{
     stdout: string | Buffer | null
     stderr: string | Buffer | null
-    exitCode: number | null
+    exitCode: number
   }>((resolve, reject) => {
     const output = {
       stdout: spawnedProcess.stdout ? ([] as (string | Buffer)[]) : null,
@@ -80,52 +80,52 @@ async function execInternal(
 export function exec(
   command: string,
   args: string[],
-  options: { encoding: 'buffer' | null } & Omit<ExtendedExecOptions, 'stdio'>,
+  options?: { encoding?: 'buffer' | null } & Omit<ExtendedExecOptions, 'stdio'>,
 ): ProcessPromise<{
   stdout: Buffer
   stderr: Buffer
-  exitCode: number | null
+  exitCode: number
 }>
 export function exec(
   command: string,
   args: string[],
-  options: { encoding: 'buffer' | null } & ExtendedExecOptions,
+  options?: { encoding?: 'buffer' | null } & ExtendedExecOptions,
 ): ProcessPromise<{
   stdout: Buffer | null
   stderr: Buffer | null
-  exitCode: number | null
+  exitCode: number
 }>
 export function exec(
   command: string,
   args: string[],
-  options: { encoding: BufferEncoding } & Omit<ExtendedExecOptions, 'stdio'>,
+  options?: { encoding: BufferEncoding } & Omit<ExtendedExecOptions, 'stdio'>,
 ): ProcessPromise<{
   stdout: string
   stderr: string
-  exitCode: number | null
+  exitCode: number
 }>
 export function exec(
   command: string,
   args: string[],
-  options: { encoding: BufferEncoding } & ExtendedExecOptions,
+  options?: { encoding: BufferEncoding } & ExtendedExecOptions,
 ): ProcessPromise<{
   stdout: string | null
   stderr: string | null
-  exitCode: number | null
+  exitCode: number
 }>
 
 export function exec(
   command: string,
   args: string[],
-  options:
-    | ({ encoding: 'buffer' | null } & Omit<ExtendedExecOptions, 'stdio'>)
-    | ({ encoding: 'buffer' | null } & ExtendedExecOptions)
+  options?:
+    | ({ encoding?: 'buffer' | null } & Omit<ExtendedExecOptions, 'stdio'>)
+    | ({ encoding?: 'buffer' | null } & ExtendedExecOptions)
     | ({ encoding: BufferEncoding } & Omit<ExtendedExecOptions, 'stdio'>)
     | ({ encoding: BufferEncoding } & ExtendedExecOptions),
 ): ProcessPromise<{
   stdout: string | Buffer | null
   stderr: string | Buffer | null
-  exitCode: number | null
+  exitCode: number
 }> {
   let spawnedProcess: ChildProcess
 
@@ -137,7 +137,7 @@ export function exec(
   }) as ProcessPromise<{
     stdout: string | Buffer | null
     stderr: string | Buffer | null
-    exitCode: number | null
+    exitCode: number
   }>
 
   promise.kill = function(signal?: NodeJS.Signals | number) {
