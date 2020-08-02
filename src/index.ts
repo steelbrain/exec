@@ -12,10 +12,10 @@ async function execInternal(
   command: string,
   args: string[],
   options: (
-    | ({ encoding?: 'buffer' | null } & Omit<ExtendedExecOptions, 'stdio'>)
-    | ({ encoding?: 'buffer' | null } & ExtendedExecOptions)
-    | ({ encoding: BufferEncoding } & Omit<ExtendedExecOptions, 'stdio'>)
-    | ({ encoding: BufferEncoding } & ExtendedExecOptions)) &
+    | ({ encoding: 'buffer' | null } & Omit<ExtendedExecOptions, 'stdio'>)
+    | ({ encoding: 'buffer' | null } & ExtendedExecOptions)
+    | ({ encoding?: BufferEncoding } & Omit<ExtendedExecOptions, 'stdio'>)
+    | ({ encoding?: BufferEncoding } & ExtendedExecOptions)) &
     ({
       handleChildProcess(childProcess: ChildProcess): void
     }),
@@ -80,7 +80,7 @@ async function execInternal(
 export function exec(
   command: string,
   args: string[],
-  options?: { encoding?: 'buffer' | null } & Omit<ExtendedExecOptions, 'stdio'>,
+  options?: { encoding: 'buffer' | null } & Omit<ExtendedExecOptions, 'stdio'>,
 ): ProcessPromise<{
   stdout: Buffer
   stderr: Buffer
@@ -89,7 +89,7 @@ export function exec(
 export function exec(
   command: string,
   args: string[],
-  options?: { encoding?: 'buffer' | null } & ExtendedExecOptions,
+  options?: { encoding: 'buffer' | null } & ExtendedExecOptions,
 ): ProcessPromise<{
   stdout: Buffer | null
   stderr: Buffer | null
@@ -98,7 +98,7 @@ export function exec(
 export function exec(
   command: string,
   args: string[],
-  options?: { encoding: BufferEncoding } & Omit<ExtendedExecOptions, 'stdio'>,
+  options?: { encoding?: BufferEncoding } & Omit<ExtendedExecOptions, 'stdio'>,
 ): ProcessPromise<{
   stdout: string
   stderr: string
@@ -107,7 +107,7 @@ export function exec(
 export function exec(
   command: string,
   args: string[],
-  options?: { encoding: BufferEncoding } & ExtendedExecOptions,
+  options?: { encoding?: BufferEncoding } & ExtendedExecOptions,
 ): ProcessPromise<{
   stdout: string | null
   stderr: string | null
@@ -118,10 +118,10 @@ export function exec(
   command: string,
   args: string[],
   options?:
-    | ({ encoding?: 'buffer' | null } & Omit<ExtendedExecOptions, 'stdio'>)
-    | ({ encoding?: 'buffer' | null } & ExtendedExecOptions)
-    | ({ encoding: BufferEncoding } & Omit<ExtendedExecOptions, 'stdio'>)
-    | ({ encoding: BufferEncoding } & ExtendedExecOptions),
+    | ({ encoding: 'buffer' | null } & Omit<ExtendedExecOptions, 'stdio'>)
+    | ({ encoding: 'buffer' | null } & ExtendedExecOptions)
+    | ({ encoding?: BufferEncoding } & Omit<ExtendedExecOptions, 'stdio'>)
+    | ({ encoding?: BufferEncoding } & ExtendedExecOptions),
 ): ProcessPromise<{
   stdout: string | Buffer | null
   stderr: string | Buffer | null
@@ -141,8 +141,63 @@ export function exec(
   }>
 
   promise.kill = function(signal?: NodeJS.Signals | number) {
+    // TODO: kill all subprocesses on windows with wmic?
     return spawnedProcess.kill(signal)
   }
 
   return promise
+}
+
+export function execFile(
+  filePath: string,
+  args: string[],
+  options?: { encoding: 'buffer' | null } & Omit<ExtendedExecOptions, 'stdio'>,
+): ProcessPromise<{
+  stdout: Buffer
+  stderr: Buffer
+  exitCode: number
+}>
+export function execFile(
+  filePath: string,
+  args: string[],
+  options?: { encoding: 'buffer' | null } & ExtendedExecOptions,
+): ProcessPromise<{
+  stdout: Buffer | null
+  stderr: Buffer | null
+  exitCode: number
+}>
+export function execFile(
+  filePath: string,
+  args: string[],
+  options?: { encoding?: BufferEncoding } & Omit<ExtendedExecOptions, 'stdio'>,
+): ProcessPromise<{
+  stdout: string
+  stderr: string
+  exitCode: number
+}>
+export function execFile(
+  filePath: string,
+  args: string[],
+  options?: { encoding?: BufferEncoding } & ExtendedExecOptions,
+): ProcessPromise<{
+  stdout: string | null
+  stderr: string | null
+  exitCode: number
+}>
+
+export function execFile(
+  filePath: string,
+  args: string[],
+  options?:
+    | ({ encoding: 'buffer' | null } & Omit<ExtendedExecOptions, 'stdio'>)
+    | ({ encoding: 'buffer' | null } & ExtendedExecOptions)
+    | ({ encoding?: BufferEncoding } & Omit<ExtendedExecOptions, 'stdio'>)
+    | ({ encoding?: BufferEncoding } & ExtendedExecOptions),
+): ProcessPromise<{
+  stdout: string | Buffer | null
+  stderr: string | Buffer | null
+  exitCode: number
+}> {
+  return exec(process.execPath, [filePath].concat(args), options as any)
+  // ^ TS is drunk, force override the type
 }
