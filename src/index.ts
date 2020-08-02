@@ -88,7 +88,7 @@ async function execInternal(
 export function exec(
   command: string,
   args: string[],
-  options?: { encoding: 'buffer' | null } & Omit<ExtendedExecOptions<Buffer>, 'stdio'>,
+  options: { encoding: 'buffer' | null } & Omit<ExtendedExecOptions<Buffer>, 'stdio'>,
 ): ProcessPromise<{
   stdout: Buffer
   stderr: Buffer
@@ -97,7 +97,7 @@ export function exec(
 export function exec(
   command: string,
   args: string[],
-  options?: { encoding: 'buffer' | null } & ExtendedExecOptions<Buffer>,
+  options: { encoding: 'buffer' | null } & ExtendedExecOptions<Buffer>,
 ): ProcessPromise<{
   stdout: Buffer | null
   stderr: Buffer | null
@@ -159,7 +159,7 @@ export function exec(
 export function execFile(
   filePath: string,
   args: string[],
-  options?: { encoding: 'buffer' | null } & Omit<ExtendedExecOptions<Buffer>, 'stdio'>,
+  options: { encoding: 'buffer' | null } & Omit<ExtendedExecOptions<Buffer>, 'stdio'>,
 ): ProcessPromise<{
   stdout: Buffer
   stderr: Buffer
@@ -168,7 +168,7 @@ export function execFile(
 export function execFile(
   filePath: string,
   args: string[],
-  options?: { encoding: 'buffer' | null } & ExtendedExecOptions<Buffer>,
+  options: { encoding: 'buffer' | null } & ExtendedExecOptions<Buffer>,
 ): ProcessPromise<{
   stdout: Buffer | null
   stderr: Buffer | null
