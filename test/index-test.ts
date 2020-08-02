@@ -60,10 +60,12 @@ test('works with ls and args', async t => {
 test('has a working stderr', async t => {
   const output = await exec('ls', ['/non-existent-dir'])
   t.truthy(output.exitCode === 1 || output.exitCode === 2, 'output.exitCode is non-zero')
-  t.is(output.stderr, 'ls: /non-existent-dir: No such file or directory\n')
+  t.truthy(
+    output.stderr === 'ls: /non-existent-dir: No such file or directory\n' ||
+      output.stderr === `ls: cannot access '/non-existent-dir': No such file or directory\n`,
+    'has correct stderr error message',
+  )
   t.is(output.stdout, '')
-
-  t.snapshot(output)
 })
 
 test('has a working execFile', async t => {
