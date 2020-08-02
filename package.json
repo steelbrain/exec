@@ -2,13 +2,13 @@
   "name": "@steelbrain/exec",
   "version": "0.0.0",
   "description": "Process spawning APIs beautified",
-  "main": "lib/cjs/index.js",
+  "main": "lib/cjs/index.cjs",
   "typings": "lib/typings/index.d.ts",
   "module": "lib/esm/index.js",
   "exports": {
     ".": {
       "import": "./lib/esm/index.js",
-      "require": "./lib/cjs/index.js"
+      "require": "./lib/cjs/index.cjs"
     },
     "./package.json": "./package.json"
   },
@@ -19,7 +19,7 @@
     "prepare": "yarn build:clean ; yarn build:esm ; yarn build:cjs ; yarn build:typings",
     "build:clean": "rm -rf lib",
     "build:esm": "tsc --module es2015 --target es2018 --outDir lib/esm",
-    "build:cjs": "tsc --module commonjs --target es5 --outDir lib/cjs",
+    "build:cjs": "tsc --module commonjs --target es5 --outDir lib/cjs && mv lib/cjs/index.js lib/cjs/index.cjs",
     "build:typings": "tsc --declaration --outDir lib/typings --emitDeclarationOnly"
   },
   "repository": {
