@@ -59,7 +59,7 @@ test('works with ls and args', async t => {
 
 test('has a working stderr', async t => {
   const output = await exec('ls', ['/non-existent-dir'])
-  t.is(output.exitCode, 1)
+  t.truthy(output.exitCode === 1 || output.exitCode === 2, 'output.exitCode is non-zero')
   t.is(output.stderr, 'ls: /non-existent-dir: No such file or directory\n')
   t.is(output.stdout, '')
 
