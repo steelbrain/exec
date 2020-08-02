@@ -28,6 +28,7 @@
   ],
   "homepage": "https://github.com/steelbrain/exec#readme",
   "devDependencies": {
+    "@types/node": "^14.0.27",
     "ava": "^3.7.0",
     "eslint-config-steelbrain": "^9.0.1",
     "ts-node": "^8.8.2",
