@@ -56,7 +56,6 @@ async function execInternal(
     }
 
     spawnedProcess.on('close', code => {
-
       let outputStdout: string | Buffer | null = null
       if (output.stdout != null) {
         outputStdout =
@@ -73,7 +72,7 @@ async function execInternal(
       }
 
       resolve({
-        exitCode: code ?? null,
+        exitCode: code,
         stdout: outputStdout,
         stderr: outputStderr,
       })
@@ -141,7 +140,7 @@ export function exec(
     ...options,
     handleChildProcess(_spawnedProcess) {
       spawnedProcess = _spawnedProcess
-    }
+    },
   }) as ProcessPromise<{
     stdout: string | Buffer | null
     stderr: string | Buffer | null
