@@ -3,6 +3,7 @@
   "version": "4.0.0",
   "description": "Process spawning APIs beautified",
   "main": "lib/index.js",
+  "types": "./types/index.d.ts",
   "scripts": {
     "lint": "(flow check) && (eslint .)",
     "test": "apm test",
